@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>艾倫·瑞克曼 Digital Archive</title>
+
+  <!-- Security headers -->
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://unpkg.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+    img-src 'self' data: https://img.youtube.com https://i.ytimg.com;
+    connect-src 'self';
+    frame-ancestors 'none';
+    base-uri 'self';
+    form-action 'none';
+  " />
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" /></noscript>
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body, #root { height: 100%; margin: 0; padding: 0; }
+    body { font-family: 'Noto Sans TC', 'PingFang TC', system-ui, sans-serif; background: #FAF8F3; }
+
+    #loader {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: #FAF8F3; color: #6B6B6B; font-family: 'Noto Serif TC', Georgia, serif;
+      z-index: 9999; transition: opacity 0.4s;
+    }
+    #loader.hide { opacity: 0; pointer-events: none; }
+    .loader-inner { text-align: center; max-width: 360px; padding: 0 20px; }
+    .loader-title { font-size: 28px; font-weight: 900; color: #2B2B2B; margin-bottom: 6px; letter-spacing: 0.02em; }
+    .loader-sub { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #C7A77A; font-weight: 700; margin-bottom: 32px; }
+
+    .progress-wrap {
+      width: 100%; height: 3px; background: #E2DED7; border-radius: 2px; overflow: hidden; margin-bottom: 14px;
+      position: relative;
+    }
+    .progress-bar {
+      position: absolute; left: 0; top: 0; height: 100%;
+      background: linear-gradient(90deg, #C7A77A, #B89968);
+      width: 0%; border-radius: 2px;
+      transition: width 0.5s ease-out;
+    }
+    .progress-wrap.indeterminate .progress-bar {
+      width: 40% !important;
+      animation: indeterminate 1.4s ease-in-out infinite;
+      transition: none;
+    }
+    @keyframes indeterminate {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(250%); }
+    }
+
+    .step-text {
+      font-family: 'Noto Sans TC', system-ui, sans-serif;
+      font-size: 12px; color: #6B6B6B; min-height: 18px;
+    }
+    .step-pct {
+      font-family: monospace; color: #C7A77A; font-weight: 700; margin-left: 6px;
+    }
+
+    .slow-notice {
+      margin-top: 24px; padding: 14px 16px;
+      background: #fdf8ef; border: 1px solid #E5D9BD; border-radius: 6px;
+      font-size: 12px; color: #6B6B6B; line-height: 1.6;
+      font-family: 'Noto Sans TC', system-ui, sans-serif;
+      opacity: 0; transform: translateY(-4px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .slow-notice.show { opacity: 1; transform: translateY(0); }
+    .slow-notice strong { color: #B89968; }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-title">艾倫·瑞克曼</div>
+      <div class="loader-sub">Digital Archive</div>
+      <div class="progress-wrap" id="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+      <div class="step-text" id="step-text">準備中…<span class="step-pct" id="step-pct"></span></div>
+      <div class="slow-notice" id="slow-notice">
+        首次載入需下載執行環境（約 <strong>3 MB</strong>），可能需要 5–15 秒。<br/>
+        瀏覽器會快取，下次開啟會非常快。
+      </div>
+    </div>
+  </div>
+  <div id="root"></div>
+
+  <script>
+    (function() {
+      var bar = document.getElementById('progress-bar');
+      var wrap = document.getElementById('progress-wrap');
+      var stepText = document.getElementById('step-text');
+      var stepPct = document.getElementById('step-pct');
+      var slowNotice = document.getElementById('slow-notice');
+
+      function setStep(label, pct) {
+        if (stepText) stepText.firstChild.textContent = label;
+        if (pct === null || pct === undefined) {
+          if (wrap) wrap.classList.add('indeterminate');
+          if (stepPct) stepPct.textContent = '';
+        } else {
+          if (wrap) wrap.classList.remove('indeterminate');
+          if (stepPct) stepPct.textContent = pct + '%';
+          if (bar) bar.style.width = pct + '%';
+        }
+      }
+
+      setTimeout(function() {
+        if (!window.__APP_RENDERED__ && slowNotice) {
+          slowNotice.classList.add('show');
+        }
+      }, 3000);
+
+      window.__loaderSteps = {
+        setStep: setStep,
+        markReact:    function() { setStep('載入 React…', 25); },
+        markReactDOM: function() { setStep('載入 ReactDOM…', 45); },
+        markBabel:    function() { setStep('載入 Babel 編譯器…', 70); },
+        markCompile:  function() { setStep('編譯應用程式（請稍候）…', null); },
+        markRender:   function() { setStep('準備介面…', 95); },
+        markDone:     function() { setStep('完成', 100); }
+      };
+
+      setStep('連線 CDN…', 8);
+    })();
+  </script>
+
+  <script
+    src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    onload="window.__loaderSteps && window.__loaderSteps.markReact()"></script>
+
+  <script
+    src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    onload="window.__loaderSteps && window.__loaderSteps.markReactDOM()"></script>
+
+  <script
+    src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    onload="window.__loaderSteps && window.__loaderSteps.markBabel()"></script>
+
+  <script>
+    if (window.__loaderSteps) window.__loaderSteps.markCompile();
+  </script>
+
+  <script type="text/babel" data-presets="react">
+const { useState, useMemo, useEffect, useRef } = React;
+
+// ════════════════════════════════════════════════════════════════════════════
+// 艾倫·瑞克曼 Digital Archive 資料庫
+// ════════════════════════════════════════════════════════════════════════════
+
+const YT_HOSTS = ["youtube.com", "www.youtube.com", "youtu.be"];
+
+const HTML_DATA = [
+  { id: 10001, type: "link", title: "Pictures — Harry Potter Fan Zone", subtitle: "哈利波特粉絲網站圖片庫", year: 2016, url: "https://www.harrypotterfanzone.com/pictures/categories/", tags: ["圖片庫"], notes: [] },
+  { id: 10002, type: "link", title: "Getty Images", subtitle: "美國圖片網站", year: 2016, url: "https://www.gettyimages.hk/圖片/alan-rickman-圖片", tags: ["圖片庫"], notes: [] },
+  { id: 10003, type: "link", title: "Alan Rickman - GIFs - Imgur", subtitle: "GIF圖片庫", year: 2016, url: "https://imgur.com/t/alan_rickman", tags: ["圖片庫"], notes: [] },
+  { id: 10004, type: "link", title: "Alan Rickman - IMDb 圖片庫", subtitle: "IMDb:網路電影資料庫", year: 2016, url: "https://www.imdb.com/name/nm0000614/", tags: ["圖片庫"], notes: [] },
+  { id: 10005, type: "link", title: "艾倫·瑞克曼影像回顧 Life In Pictures | 電影 | 《衛報》", subtitle: "", year: 2016, url: "https://www.theguardian.com/film/gallery/2016/jan/14/alan-rickman-a-life-in-pictures", tags: ["圖片庫"], notes: [] },
+  { id: 10205, type: "link", title: "羅馬尼亞電影網站 — CineMagia", subtitle: "圖片庫", year: 2016, url: "https://m.cinemagia.ro/actori/alan-rickman-3163/images/", tags: ["圖片庫"], notes: [] },
+  { id: 10206, type: "link", title: "波蘭電影網站 — Filmweb", subtitle: "圖片庫", year: 2016, url: "https://www.filmweb.pl/person/Alan+Rickman-89/photos", tags: ["圖片庫"], notes: [] },
+  { id: 10207, type: "link", title: "俄羅斯電影網站 — Kinopoisk", subtitle: "圖片庫", year: 2016, url: "https://www.kinopoisk.ru/name/202/photos/", tags: ["圖片庫"], notes: [] },
+  { id: 10208, type: "link", title: "英國圖片網站 — Alamy", subtitle: "圖片庫", year: 2016, url: "https://www.alamy.com/stock-photo/alan-rickman.html", tags: ["圖片庫"], notes: [] },
+  { id: 10209, type: "link", title: "日本娛樂網站 — Crank-in", subtitle: "圖片庫", year: 2016, url: "https://www.crank-in.net/gallery/person/1662/7", tags: ["圖片庫"], notes: [] },
+
+  { id: 10008, type: "link", title: "《哈利波特》中你可能錯過的石內卜小細節", subtitle: "", year: 2001, url: "https://www.looper.com/820450/the-small-snape-detail-you-likely-missed-in-harry-potter/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10009, type: "link", title: "「賽佛勒斯」名字的由來", subtitle: "", year: 2001, url: "https://www.superherohype.com/movies/481885-j-k-rowling-reveals-the-origin-of-snapes-name-in-the-harry-potter-saga", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10010, type: "link", title: "艾倫在接下角色後主動打給羅琳", subtitle: "艾倫說明自己當年在接下角色後主動打給羅琳的故事、還有J.K.羅琳當年跟自己說了什麼（30：00）", year: 2001, url: "https://www.youtube.com/watch?v=WNC1_IEcV7c", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10011, type: "link", title: "艾倫·瑞克曼飾演的石內卜是否影響了 J.K. 羅琳創作石內卜？不是，影響羅琳創作角色的演員只有飾演露娜的伊凡娜林奇", subtitle: "", year: 2001, url: "https://www.reddit.com/r/harrypotter/comments/19dj8ef/did_alan_rickman_as_snape_influence_how_jk/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10012, type: "link", title: "羅琳的老師—石內卜教授的靈感來源逝世，享年 71 歲", subtitle: "", year: 2001, url: "https://www.walesonline.co.uk/lifestyle/showbiz/rowlings-teacher-who-inspired-harry-1846776", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10013, type: "link", title: "《阿茲卡班的逃犯》中的伏筆", subtitle: "", year: 2001, url: "https://dumbledoreisnotdead.com/foreshadowings-in-prisoner-of-azkaban/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10014, type: "link", title: "News: USA Today: J.K. Rowling on 'Azkaban' film - HPANA", subtitle: "USA Today 採訪：J.K. 羅琳談《阿茲卡班的逃犯》電影", year: 2001, url: "https://hpana.com/news/18149", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10015, type: "link", title: "J.K. 羅琳在《阿茲卡班的逃犯》的DVD 中提到了什麼？", subtitle: "", year: 2001, url: "https://scifi.stackexchange.com/questions/5426/what-was-jk-rowling-referring-to-during-the-prisoner-of-azkaban-dvd-commentary", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10016, type: "link", title: "編劇 Steve Kloves 談石內卜 - LiveJournal", subtitle: "", year: 2001, url: "https://rattlesnakeroot.livejournal.com/94875.html", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10017, type: "link", title: "J.K. 羅琳推文：石內卜的霸凌行為與悲劇 - X", subtitle: "", year: 2015, url: "https://x.com/jk_rowling/status/670278271171457024", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10018, type: "link", title: "J.K. 羅琳推文：石內卜將對詹姆的仇恨投射到哈利身上 - X", subtitle: "", year: 2015, url: "https://x.com/jk_rowling/status/670171378130243584", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10020, type: "link", title: "J.K. 羅琳透露她當年（2001）對艾倫·瑞克曼說了什麼 - Deadline", subtitle: "", year: 2024, url: "https://deadline.com/2024/05/j-k-rowling-harry-potter-star-alan-rickman-about-severus-snape-big-secret-1235904742/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10021, type: "link", title: "艾倫·瑞克曼：關於石內卜的採訪（2001）", subtitle: "", year: 2001, url: "https://whysnape.tripod.com/rickman.htm", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10023, type: "link", title: "艾倫·瑞克曼澄清：J.K. 羅琳到底告訴了他多少關於石內卜的事", subtitle: "", year: 2001, url: "https://uproxx.com/hitfix/alan-rickman-clarifies-just-how-much-j-k-rowling-told-him-about-snapes-fate-in-the-harry-potter-series/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 10024, type: "link", title: "羅琳告訴艾倫「石內卜不會大聲說話」 - Quora", subtitle: "", year: 2001, url: "https://www.quora.com/In-an-interview-Alan-Rickman-said-JK-Rowling-told-him-Snape-doesnt-raise-his-voice-he-never-really-shouts-Why-would-she-say-that-to-him", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+
+  { id: 10028, type: "link", title: "艾倫·瑞克曼在筆記中透露他對導演的失望：「感覺大衛葉慈不重視故事，只想討好青少年觀眾。」- Elite Daily", subtitle: "", year: 2018, url: "https://www.elitedaily.com/p/alan-rickmans-snape-letters-reveal-a-new-side-of-the-half-blood-prince-9234381", tags: ["哈利波特:爛導演大衛葉慈"], notes: [] },
+  { id: 10029, type: "link", title: "艾倫·瑞克曼在信件中透露，自己對飾演石內卜感到「沮喪」 | 《獨立報》", subtitle: "", year: 2018, url: "https://www.independent.co.uk/arts-entertainment/films/news/alan-rickman-snape-harry-potter-letters-frustrated-auction-collection-a8371851.html", tags: ["哈利波特:爛導演大衛葉慈"], notes: [] },
+  { id: 10030, type: "link", title: "飾演兒童石內卜的 Benedict Clarke 談他與艾倫·瑞克曼的見面經過 - Reddit", subtitle: "", year: 2025, url: "https://www.reddit.com/r/SeverusSnape/comments/1ky4qk9/benedict_clarke_young_snape_on_meeting_alan/", tags: ["哈利波特:爛導演大衛葉慈"], notes: [] },
+  { id: 10031, type: "link", title: "SeverusSnape.org - 採訪青年石內卜 Alec Hopkins", subtitle: "Alec Hopkins 訪談（飾演 11 歲石內卜的童星）", year: 2001, url: "http://www.severussnape.free.fr/pages/alechopkins/interviewhopkinsss.htm", tags: ["哈利波特:爛導演大衛葉慈"], notes: [] },
+  { id: 10032, type: "link", title: "艾倫·瑞克曼鼓勵哈利波特電影粉絲讀小說：「書裡有所有你需要知道的細節」", subtitle: "", year: 2011, url: "https://www.romper.com/p/this-one-alan-rickman-quote-about-harry-potter-reminds-us-why-he-was-the-perfect-choice-to-play-severus-snape-4064", tags: ["哈利波特:爛導演大衛葉慈"], notes: [] },
+
+  { id: 10033, type: "link", title: "Harry Potter Deleted and Unreleased Scenes — Harry Potter Database", subtitle: "哈利波特刪減與未公開片段資料庫", year: 2001, url: "https://www.harrypotterdatabase.com/deleted-and-unreleased-scenes", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+  { id: 10034, type: "link", title: "哈利波特 1：神秘的魔法石 — HP Database", subtitle: "", year: 2020, url: "https://www.harrypotterdatabase.com/blog/2020/8/18/harry-potter-and-the-philosophers-stone-deleted-and-unreleased-scenes", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+  { id: 10035, type: "link", title: "哈利波特 2：消失的密室 — HP Database", subtitle: "", year: 2020, url: "https://www.harrypotterdatabase.com/blog/2020/11/26/harry-potter-and-the-chamber-of-secrets-deleted-and-unreleased-scenes", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+  { id: 10036, type: "link", title: "哈利波特 3：阿茲卡班的逃犯 — HP Database", subtitle: "", year: 2021, url: "https://www.harrypotterdatabase.com/blog/2021/01/10/harry-potter-and-the-prisoner-of-azkaban-deleted-and-unreleased-scenes", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+  { id: 10037, type: "link", title: "哈利波特 4：火盃的考驗 — HP Database", subtitle: "", year: 2021, url: "https://www.harrypotterdatabase.com/blog/2021/3/30/harry-potter-and-the-goblet-of-fire-deleted-and-unreleased-scenes", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+  { id: 10038, type: "link", title: "哈利波特 5：鳳凰會的密令 — HP Database", subtitle: "", year: 2022, url: "https://www.harrypotterdatabase.com/blog/2022/1/23/harry-potter-and-the-order-of-the-phoenix-deleted-and-unreleased-scenes", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+  { id: 10039, type: "link", title: "哈利波特 6：混血王子 — HP Database", subtitle: "", year: 2022, url: "https://www.harrypotterdatabase.com/blog/2022/10/31/harry-potter-and-the-half-blood-prince-deleted-and-unreleased-scenes", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+  { id: 10040, type: "link", title: "哈利波特 7：死神的聖物(上) — HP Database", subtitle: "", year: 2024, url: "https://harrypotterdatabase.squarespace.com/blog/2024/6/30/harry-potter-and-the-deathly-hallows-part-1-deleted-and-unreleased-scenes", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+
+  { id: 10041, type: "link", title: "哈利波特工作室「對英國明星很小氣」 | 電訊報", subtitle: "", year: 2001, url: "https://www.telegraph.co.uk/news/uknews/1362158/Harry-Potter-studio-was-mean-with-British-stars.html", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10042, type: "link", title: "演員罷工恐衝擊龐德與哈利波特 | 衛報", subtitle: "", year: 2001, url: "https://www.theguardian.com/uk/2001/sep/23/filmnews.film", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10043, type: "link", title: "艾倫·瑞克曼在2008年某次採訪中提到：電影業是「一群會操弄人心、貪婪的混蛋」", subtitle: "", year: 2008, url: "https://rattlesnakeroot.livejournal.com/53022.html", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10044, type: "link", title: "演員與片廠就電影利潤分成達成共識，結束長達兩年的爭議 | 《獨立報》", subtitle: "", year: 2003, url: "https://www.independent.co.uk/arts-entertainment/films/news/actors-deal-over-film-profits-ends-twoyear-dispute-5361547.html", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10045, type: "link", title: "David Holmes 回憶錄《The Boy Who Lived》— 艾倫帶頭談判分紅條款", subtitle: "我其實非常感謝已故的艾倫・瑞克曼（Alan Rickman）。在他加入《哈利波特》電影之前，他就很有遠見地帶頭組織一群演員，希望能談判出一項分紅條款。條款內容是：所有以英國演員工會（Equity）合約參與拍攝的人，都可以從每一部電影中獲得版稅分紅，而分紅的金額則取決於在鏡頭前工作的天數——不論你是瑪姬・史密斯女爵，還是像我這樣來自Romford升命的特技演員。可計算的最高天數是二十五天，而我在每一部電影裡都把這個天數用滿了。這意味著，我拿到的分紅其實和英國影壇一些最知名的演員差不多。那些支票很快就越累越多，讓我的銀行存款直線上升。直到今天，我每三個月仍然會收到一筆費用——這一切都要感謝艾倫當年的努力奔走。現在，這些支票成了我的安全保障。它們讓我能購買電動輪椅、iPad 和其他設備——不只給我自己，也能幫助那些比我更需要的人。而這一切，都要歸功於那位了不起的人。艾倫為我打下了一個財務基礎，而這個基礎後來也為其他人帶來了難以置信的連鎖效應。我真的非常愛他，也非常感激他。", year: 2001, url: "https://www.amazon.com/-/zh_TW/Boy-Who-Lived-foreword-Radcliffe/dp/139973881X", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10046, type: "link", title: "比爾·奈伊 Bill Nighy：瑞克曼會照顧到每一個人，為臨時演員的待遇發聲", subtitle: "", year: 2018, url: "https://www.digitalspy.com/showbiz/a852185/ordeal-by-innocence-bill-nighy-nicest-actor-in-hollywood/", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10047, type: "link", title: "哈利波特臨時演員片酬揭露—外界「不敢相信」她拿這麼少", subtitle: "", year: 2023, url: "https://www.msn.com/en-gb/entertainment/news/harry-potter-extras-wages-revealed-people-cant-believe-how-much-she-was-paid/ar-AA1ESS8L", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10048, type: "link", title: "米瑞安·瑪格萊斯 Miriam Margolyes 揭露自己在兩部電影中飾演芽菜教授只拿到 6 萬英鎊的片酬", subtitle: "", year: 2022, url: "https://www.express.co.uk/entertainment/films/1687645/Miriam-Margolyes-how-much-paid-for-Harry-Potter-Professor-Sprout-swearing", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10049, type: "link", title: "柔依·瓦娜梅克 Zoe Wanamaker 砲轟《哈利波特系列電影》的片酬", subtitle: "她也透露，所有演員都已經被「數位掃描」（cyber-scanned），這樣他們的角色就可以被複製到電腦遊戲中使用，但英國演員卻無法從這些遊戲的銷售中獲得任何報酬或分潤。「這真的很不應該。連設計出那些精彩服裝的服裝設計師也拿不到任何分潤，實在令人震驚又可恥，」這位女演員憤怒地表示。", year: 2001, url: "https://www.theguardian.com/film/2001/nov/12/harrypotter.news", tags: ["哈利波特:合約爭議"], notes: [] },
+  { id: 10051, type: "link", title: "米瑞安·瑪格萊斯 Miriam Margolyes 在回憶錄中爆料：華納用換角威脅艾倫·瑞克曼拿半薪 - Reddit", subtitle: "說到合約，又讓我想起另一個我直接從艾倫・瑞克曼那裡聽來的《哈利波特》故事。他飾演石內卜，憑藉他在銀幕上的強大魅力，讓這個角色成為整個系列中最有分量的人物之一。最後那本非常厚的書《哈利波特：死神的聖物》被拆成上下兩部電影。華納兄弟決定兩部分一起拍攝——因此他們告訴艾倫他只能拿一份電影的片酬。艾倫那位極具智慧的經紀人 Paul Lyon-Maris 指出，如果電影分開上映，華納兄弟就能有兩份票房收入。因此，艾倫·瑞克曼也應該因參與兩部作品而拿到兩份片酬。華納兄弟拒絕，甚至表示那只好找其他人來演石內卜。找其他人來石內卜？艾倫笑了：「請便。」就在第二部分開拍的前一天，他們終於同意付給艾倫兩份片酬。有時候，你真的會懷疑好萊塢大人物的頭腦究竟在想什麼。", year: 2009, url: "https://www.reddit.com/r/harrypotter/comments/wffcmi/miriam_margoyles_shares_an_alan_rickman_story_in/", tags: ["哈利波特:合約爭議"], notes: [] },
+
+  { id: 10054, type: "link", title: "艾倫的教子追憶艾倫·瑞克曼", subtitle: "", year: 2016, url: "https://x.com/seanchuckle/status/687688517925924864", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10052, type: "link", title: "艾迪·以札德 Eddie Izzard：「（當年）當我問艾倫·瑞克曼還會不會繼續出現在故事中，他淡淡地說：『嗯，最新那本《混血王子的背叛》剛出版。』接著他又壓低聲音補了一句：『而我—我就是混血王子！』」", subtitle: "", year: 2005, url: "https://www.theguardian.com/film/2022/sep/26/alan-rickman-emma-thompson-eddie-izzard-ruby-wax-richard-curtis", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10068, type: "link", title: "《哈利波特》劇組追憶艾倫·瑞克曼—以及他的 iPod | Yahoo", subtitle: "", year: 2016, url: "https://www.yahoo.com/entertainment/cast-harry-potter-remembers-alan-150006330.html", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10069, type: "link", title: "詹姆斯·菲爾普斯 James Phelps（弗雷·衛斯理）與奧利佛·菲爾普斯 Oliver Phelps（喬治·衛斯理）回憶艾倫·瑞克曼帶著 iPod 來片場", subtitle: "", year: 2016, url: "https://wegotthiscovered.com/celebrities/how-do-you-make-this-thing-work-oliver-phelps-shares-alan-rickmans-ipod-shenanigans-and-how-he-volunteered-for-a-school-project-while-filming-harry-potter/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10085, type: "link", title: "伊凡娜·林奇 Evanna Lynch（露娜·羅古德）：艾倫·瑞克曼在拍攝期間幾乎每天都會帶著一群小朋友來探班，那畫面非常奇妙—石內卜穿著黑袍站在那裡，身邊圍著一群開心的小孩", subtitle: "", year: 2016, url: "https://www.cosmopolitan.com/uk/entertainment/a23919372/harry-potter-cast-alan-rickman-tribute/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10053, type: "link", title: "Leviosa 2019: Sean Biggerstaff(奧利佛·木透)問答環節 - MuggleNet", subtitle: "2019 年哈利波特粉絲大會問答", year: 2019, url: "https://mugglenet.com/2019/07/leviosa-2019-sean-biggerstaff-qa-session/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10056, type: "link", title: "艾倫教子 Sean Biggerstaff(奧利佛·木透)：艾倫·瑞克曼從片場帶走道具是為了義賣給慈善機構", subtitle: "", year: 2021, url: "https://www.harrypotter.com/news/empire-magazine-interview-sean-biggerstaff", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10057, type: "link", title: "艾倫·瑞克曼偷了《哈利波特》道具，其中一件以超過 1.7 萬英鎊售出 | 電訊報", subtitle: "", year: 2001, url: "https://www.telegraph.co.uk/news/2021/06/13/alan-rickman-stole-harry-potter-props-sold-one-17000-says-co/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10058, type: "link", title: "瑪姬·史密斯 Maggie Smith（麥教授）：大家太喜歡他了，其他人都被嚴格搜身", subtitle: "", year: 2021, url: "https://mugglenet.com/2021/02/dame-maggie-smith-shares-memory-of-the-late-alan-rickman/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10059, type: "link", title: "傑森·艾塞克 Jason Isaacs（魯休思·馬份）：艾倫·瑞克曼在第一天就把古靈閣的所有金幣都順走了", subtitle: "", year: 2002, url: "https://www.ok.co.uk/movies/late-alan-rickman-stole-countless-14548318", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10075, type: "link", title: "馬修·路易斯 Matthew Lewis（奈威·隆巴頓）與艾倫·瑞克曼分享哈利波特的最後時刻", subtitle: "", year: 2011, url: "https://www.eonline.com/news/1258214/matthew-lewis-final-harry-potter-moment-with-alan-rickman-is-pure-magic", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10076, type: "link", title: "提摩西·司伯 Timothy Spall（彼得·佩迪魯）回憶：即使沒戲，艾倫·瑞克曼幾乎每天都帶朋友的小孩來片場參觀", subtitle: "", year: 2016, url: "https://www.looper.com/772666/timothy-spall-discusses-the-last-bus-alan-rickman-harry-potter-and-spencer-exclusive-interview/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10067, type: "link", title: "艾倫·瑞克曼曾擔心哈利波特粉絲會「燒了他家」？！ | Metro", subtitle: "", year: 2022, url: "https://metro.co.uk/2022/10/07/alan-rickman-worried-harry-potter-fans-would-burn-his-apartment-down-17525571/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10159, type: "link", title: "艾倫·瑞克曼與海倫·麥柯瑞Helen McCrory（水仙·馬份）採訪", subtitle: "艾倫因為石內卜的台詞「Take out your wand」太色笑場", year: 2015, url: "https://www.independent.co.uk/news/people/profiles/alan-rickman-helen-mccrory-with-us-it-s-mostly-about-laughter-and-the-odd-martini-10153057.html", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+
+  { id: 10060, type: "link", title: "伊恩·麥克連 | 電影 | 俄宮奸雄 Rasputin | 筆記 - mckellen.com", subtitle: "艾倫·瑞克曼是一位勤奮且慷慨的人。我抵達聖彼得堡僅僅五分鐘後，他就打電話到我的飯店房間，邀請我與同事共進晚餐；儘管他已經拍攝了一整天，完全可以選擇獨自在房間裡用客房服務休息。他對所有從英國前來、準備在海外開工的演員也都做了同樣的邀請。這不只是因為艾倫性格外向、喜歡與人相處；更重要的是，他希望演員們能像一個團隊一樣合作。只要現場需要有人承擔領導角色，他就會站出來，不僅在戲裡扮演拉斯普京，也在現實中的劇組裡扮演那個領導者。在片場也是如此，他總是能敏銳地察覺他人的擔憂，並給予支持。這種為整個劇組定調、主動承擔氣氛與協調角色的行為，在一線演員之中並不常見，也不是合約所要求的責任。", year: 1997, url: "https://mckellen.com/cinema/rasputin/notes.htm", tags: ["朋友回憶"], notes: [] },
+  { id: 10061, type: "link", title: "艾倫·瑞克曼致敬：「在他漫不經心的優雅背後…是一位超級英雄」 | 衛報", subtitle: "伊恩·麥克連：在拍攝俄宮奸雄的過程中，他發現當地的俄羅斯劇組所吃的午餐甚至比我們還要糟糕，於 Lhasa 成功地提出抗議並改善了情況。在我第一次上鏡的那天，他不喜歡導演給我的一張帶有居高臨下、帶有霸凌語氣的指示備忘錄。當我有些沮喪時，艾倫注意到了，便冷靜而簡潔地概述了我的職業生涯，並大聲要求導演提升自己的專業水準。", year: 2016, url: "https://www.theguardian.com/stage/2016/jan/14/alan-rickman-tributes-ian-mckellen-sigourney-weaver-ruby-wax-stephen-poliakoff-richard-wilson", tags: ["朋友回憶"], notes: [] },
+  { id: 10083, type: "link", title: "Alan Rickman Lovingly Remembered by Fans on 5th Anniversary - Newsweek", subtitle: "Newsweek：粉絲於艾倫·瑞克曼逝世五週年紀念", year: 2021, url: "https://www.newsweek.com/alan-rickman-tributes-fifth-anniversary-death-snape-1561659", tags: ["朋友回憶"], notes: [] },
+  { id: 10063, type: "link", title: "艾倫·瑞克曼：親朋好友與名人接連發文悼念 - BBC News", subtitle: "", year: 2016, url: "https://www.bbc.com/news/uk-35315589", tags: ["朋友回憶"], notes: [] },
+  { id: 10062, type: "link", title: "來信：活動家艾倫·瑞克曼 | 《衛報》", subtitle: "", year: 2016, url: "https://www.theguardian.com/film/2016/jan/18/alan-rickman-obituary-letter-david-adams", tags: ["朋友回憶"], notes: [] },
+  { id: 10066, type: "link", title: "雷夫·范恩斯 Ralph Fiennes（佛地魔）在好友艾倫·瑞克曼逝世三年後首度公開談起他 - Heart", subtitle: "", year: 2019, url: "https://www.heart.co.uk/showbiz/tv-movies/ralph-fiennes-on-alan-rickman/", tags: ["朋友回憶"], notes: [] },
+  { id: 10078, type: "link", title: "雷夫·范恩斯 Ralph Fiennes（佛地魔）回憶摯友艾倫·瑞克曼：幽默、洞察敏銳、極度忠誠 | Time", subtitle: "", year: 2016, url: "https://time.com/4181278/alan-rickman-ralph-fiennes-snape-voldemort/", tags: ["朋友回憶"], notes: [] },
+  { id: 10079, type: "link", title: "柯林·佛斯 Colin Firth：艾倫曾在南非大使館外徹夜守夜抗議 | Hollywood Reporter", subtitle: "", year: 2016, url: "https://www.hollywoodreporter.com/movies/movie-news/colin-firth-remembers-alan-rickman-857252/", tags: ["朋友回憶"], notes: [] },
+  { id: 10080, type: "link", title: "凱文·史密斯 Kevin Smith 追憶艾倫·瑞克曼 | 衛報", subtitle: "", year: 2016, url: "https://www.theguardian.com/film/2016/jan/15/alan-rickman-remembered-by-kevin-smith-a-huge-cauldron-of-win", tags: ["朋友回憶"], notes: [] },
+  { id: 10081, type: "link", title: "凱特·溫絲蕾 Kate Winslet：「如果只能用一個詞形容他，那就是善良」 | Good Housekeeping", subtitle: "", year: 2016, url: "https://www.goodhousekeeping.com/uk/news/a565997/kate-winslet-remembers-alan-rickman/", tags: ["朋友回憶"], notes: [] },
+  { id: 10027, type: "link", title: "《哈利波特》劇組向艾倫·瑞克曼致敬 - BBC News", subtitle: "", year: 2016, url: "https://www.bbc.com/news/newsbeat-35317813", tags: ["朋友回憶"], notes: [] },
+  { id: 10082, type: "link", title: "Alan Rickman remembered, 10 years after his death | The Guardian", subtitle: "衛報：艾倫·瑞克曼逝世十週年紀念", year: 2026, url: "https://www.theguardian.com/film/2026/jan/14/i-fell-in-love-with-him-on-the-spot-alan-rickman-remembered-10-years-after-his-death", tags: ["朋友回憶"], notes: [] },
+  { id: 10086, type: "link", title: "Alan Rickman: Your memories - BBC News", subtitle: "BBC：邀請讀者投稿分享對艾倫的回憶", year: 2016, url: "https://www.bbc.com/news/35314691", tags: ["朋友回憶"], notes: [] },
+  { id: 10087, type: "link", title: "Alan Rickman Death: Harry Potter Co-Stars Pay Tribute | TIME", subtitle: "TIME：艾倫·瑞克曼逝世，哈利波特演員們的悼念", year: 2016, url: "https://time.com/4180432/alan-rickman-death-harry-potter-cast-reactions/", tags: ["朋友回憶"], notes: [] },
+
+  { id: 10088, type: "link", title: "艾倫特地把我們帶到河對岸，希望我們第一眼看見瑞秋·科里的招牌時，是招牌燈光亮起，倒映在泰晤士河上的景象。 | 克雷格·科里 | 《衛報》", subtitle: "", year: 2016, url: "https://www.theguardian.com/commentisfree/2016/jan/18/alan-rickman-rachel-corrie-play-actor", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10089, type: "link", title: "艾倫·瑞克曼：最忠誠、最有趣、最慷慨的朋友 | 《衛報》", subtitle: "", year: 2016, url: "https://www.theguardian.com/film/filmblog/2016/jan/14/alan-rickman-the-most-loyal-playful-and-generous-of-friends", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10090, type: "link", title: "My Name Is Rachel Corrie By Katharine Viner - CounterCurrents", subtitle: "共同編劇凱薩琳·維納談《我的名字是瑞秋·科里》劇本創作", year: 2005, url: "https://countercurrents.org/arts-viner090405.htm", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10091, type: "link", title: "My Name is Rachel Corrie", subtitle: "Amazon：劇本電子書", year: 2005, url: "https://www.amazon.com/Rachel-Corrie-ebook/dp/B00DKMVL0S", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10092, type: "link", title: "My Name Is Rachel Corrie - Wikipedia", subtitle: "維基百科條目", year: 2005, url: "https://en.wikipedia.org/wiki/My_Name_Is_Rachel_Corrie", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10093, type: "link", title: "艾倫·瑞克曼與被噤聲的巴勒斯坦 | TikTok", subtitle: "", year: 2005, url: "https://www.tiktok.com/@illeshamarie/video/7560760202119744782", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10094, type: "link", title: "悼念艾倫·瑞克曼：道理其實很簡單", subtitle: "", year: 2016, url: "https://newvoices.org/2016/02/02/mourning-alan-rickman-its-not-complicated/", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10095, type: "link", title: "Rickman slams 'censorship' of play about US Gaza activist | 衛報", subtitle: "衛報：瑞克曼痛批《瑞秋·科里》在美國遭受審查", year: 2006, url: "https://www.theguardian.com/world/2006/feb/28/usa.israel", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10096, type: "link", title: "艾倫·瑞克曼與巴勒斯坦—瑞克曼執導《我的名字是瑞秋·科里》 | Medium", subtitle: "", year: 2005, url: "https://thepalestineproject.medium.com/alan-rickman-and-palestine-514cb1fa96be", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10097, type: "link", title: "「如果沒有風險，就不值得做」：瑞秋·科里的家人回憶艾倫·瑞克曼 – Mondoweiss", subtitle: "", year: 2016, url: "https://mondoweiss.net/2016/01/family-remembers-rickman/", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10098, type: "link", title: "瑞秋·科里逝世後，她日記與電子郵件的節錄刊登在《衛報》上。據說艾倫·瑞克曼看到後立刻打電話到皇家宮廷劇院說：「這些文字太精彩了，一定要把它們搬上舞台。」", subtitle: "", year: 2005, url: "https://pressgazette.co.uk/archive-content/its-good-to-feel-scared-from-time-to-time/", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10099, type: "link", title: "Too Hot to Handle, Too Hot to Not Handle - The New York Times", subtitle: "紐約時報：《瑞秋·科里》戲劇被審查的爭議報導", year: 2006, url: "https://www.nytimes.com/2006/03/06/theater/newsandfeatures/too-hot-to-handle-too-hot-to-not-handle.html", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 10100, type: "link", title: "回顧艾倫·瑞克曼執導、立場親巴勒斯坦的戲劇《我的名字是瑞秋·科里》- Salon.com", subtitle: "", year: 2016, url: "https://www.salon.com/2016/01/14/remembering_alan_rickmans_pro_palestinian_play_about_rachel_corrie_american_activist_crushed_by_israeli_bulldozer/", tags: ["我的名字是瑞秋·科里"], notes: [] },
+
+  { id: 10101, type: "link", title: "【知乎】【HP杂谈】关于阿伦里克曼与爱玛汤普森涉及藏独问题的资料汇总", subtitle: "", year: 2020, url: "https://zhuanlan.zhihu.com/p/104102581", tags: ["支持西藏獨立"], notes: [] },
+  { id: 10102, type: "link", title: "風傳媒：周子瑜事件與艾倫·瑞克曼的西藏立場", subtitle: "", year: 2016, url: "https://www.storm.mg/article/78858", tags: ["支持西藏獨立"], notes: [] },
+  { id: 10103, type: "link", title: "如何看待抵制子瑜却怀念支持藏独的 Alan Rickman? - GetIt01", subtitle: "", year: 2018, url: "https://www.getit01.com/p20180121339491302/", tags: ["支持西藏獨立"], notes: [] },
+  { id: 10104, type: "link", title: "艾倫個人珍藏哈利波特書籍", subtitle: "", year: 2022, url: "https://propstoreauction.com/lot-details/index/catalog/462/lot/180024/", tags: ["支持西藏獨立"], notes: [] },
+  { id: 10105, type: "link", title: "New Free Tibet Campaign - LiveJournal", subtitle: "",year: 2009, url: "https://veradee.livejournal.com/75867.html", tags: ["支持西藏獨立"], notes: [] },
+  { id: 10106, type: "link", title: "政治犯 - 自由西藏", subtitle: "Free Tibet ", year: 2024, url: "https://freetibet.org/freedom-for-tibet/political-prisoners/", tags: ["支持西藏獨立"], notes: [] },
+  { id: 10107, type: "link", title: "ARDH-Archive May 2005 - BritBitsAndClips", subtitle: "艾倫·瑞克曼資料庫 2005 年 5 月存檔", year: 2005, url: "https://britbitsandclips.com/GBArchives/ARDH-GBMay2005.html", tags: ["支持西藏獨立"], notes: [] },
+  { id: 10167, type: "youtube", title: "艾倫為「Free Tibet」運動朗讀藏族酷刑倖存者Phuntsog 的證詞", subtitle: "Free Tibet — Torture in Tibet: Alan Rickman reads Phuntsog's testimony", year: 2010, url: "https://youtu.be/H5gmB3_Gkas", tags: ["支持西藏獨立"], notes: [] },
+
+  { id: 10108, type: "youtube", title: "艾倫·瑞克曼談拍攝理性與感性", subtitle: "李安是Taiwanese", year: 1995, url: "https://www.youtube.com/watch?v=nQGdomI1BAQ", tags: ["李安Taiwan&Taiwanese"], notes: [] },
+  { id: 10109, type: "youtube", title: "艾倫·瑞克曼接受 Charlie Rose 電視訪談（2002）", subtitle: "在25分左右艾倫有提到李安是來自台灣的導演", year: 2002, url: "https://www.youtube.com/watch?v=I5Hw5peQJ1M", tags: ["李安Taiwan&Taiwanese"], notes: [] },
+
+  { id: 10110, type: "youtube", title: "Texas — 《In Demand》(Official Video)", subtitle: "Texas 樂團 MV，艾倫·瑞克曼出演", year: 2000, url: "https://www.youtube.com/watch?v=X4-gNN8WRHo", tags: ["MV"], notes: [] },
+  { id: 10111, type: "youtube", title: "Texas — 《Start A Family》", subtitle: "Texas 樂團 MV，艾倫·瑞克曼出演", year: 2000, url: "https://www.youtube.com/watch?v=SJIaRnsyaIc", tags: ["MV"], notes: [] },
+  { id: 10112, type: "youtube", title: "Alan Rickman & Charlie Dore — 《Refuse to dance》", subtitle: "", year: 1999, url: "https://www.youtube.com/watch?v=Qb7bifzMu9E", tags: ["MV"], notes: [] },
+  { id: 10160, type: "youtube", title: "Play (Samuel Beckett)", subtitle: "《Beckett on Film》系列短片之一", year: 2001, url: "https://youtu.be/bjK7kwwiRp8", tags: [], notes: [] },
+  { id: 10161, type: "youtube", title: "DUST 短片：艾倫·瑞克曼 & Jodie Whittaker", subtitle: "短片《Dust》完整版", year: 2013, url: "https://youtu.be/LDop0Je7svk", tags: [], notes: [] },
+  { id: 10162, type: "youtube", title: "Victoria Wood with All the Trimmings (BBC One, 2000)", subtitle: "艾倫客串飾演 George Fallon 上尉", year: 2000, url: "https://youtu.be/zoHS4lgaxTI", tags: [], notes: [] },
+  { id: 10163, type: "youtube", title: "「Four Yorkshiremen」from「We Know Where You Live」, 3 June 2001", subtitle: "Amnesty International 40 週年音樂會 (Wembley)", year: 2001, url: "https://youtu.be/Mgt9HgVbUyo", tags: ["其他資料"], notes: [] },
+  { id: 10164, type: "youtube", title: "Closet Land 叛國作家", subtitle: "1991 年電影，艾倫飾演 The Interrogator（與麥德琳·史道威 Madeleine Stowe 對戲）", year: 1991, url: "https://youtu.be/V1kXNcmL_e4", tags: [], notes: [] },
+  { id: 10165, type: "link", title: "Did You Know Alan Rickman Played Sherlock Holmes? | Sherlock's Home", subtitle: "「你知道艾倫·瑞克曼演過福爾摩斯嗎？」—1976 年 Birmingham Rep 舞台劇回顧", year: 2016, url: "https://sherlockshome.net/2016/01/14/did-you-know-alan-rickman-played-sherlock-holmes/", tags: [], notes: [] },
+  { id: 10166, type: "link", title: "Sherlock Holmes (play 1976 with Alan Rickman)", subtitle: "Arthur Conan Doyle 官方維基頁面", year: 1976, url: "https://www.arthur-conan-doyle.com/wiki/Sherlock_Holmes_(play_1976_with_Alan_Rickman)", tags: [], notes: [] },
+
+  { id: 10113, type: "link", title: "Propstore (Alan Rickman 搜尋頁)", subtitle: "", year: 2025, url: "https://propstore.com/products/?keyword=Alan+rickman+", tags: ["劇本/物品"], notes: [] },
+  { id: 10114, type: "link", title: "Founders' Circle: the Alan Rickman Archive with Neil Pearson | London Library", subtitle: "倫敦圖書館講座：尼爾·皮爾森介紹艾倫·瑞克曼檔案", year: 2022, url: "https://www.londonlibrary.co.uk/about-us/latest-news/2388-founders-circle-the-alan-rickman-archive-with-neil-pearson", tags: ["劇本/物品"], notes: [] },
+  { id: 10115, type: "link", title: "Alan Rickman Archive with Neil Pearson (PDF)", subtitle: "",year: 2022, url: "https://www.neilpearsonrarebooks.com/images/NPRB_Alan_Rickman_Archive_2022_1.pdf", tags: ["劇本/物品"], notes: [] },
+  { id: 10116, type: "link", title: "艾倫·瑞克曼在皇家藝術學院（RCA）參與設計的校刊 — It's Nice That", subtitle: "", year: 1969, url: "https://www.itsnicethat.com/articles/the-rca-journal-the-alan-rickman-issues", tags: ["劇本/物品"], notes: [] },
+
+  { id: 10117, type: "link", title: "Audiobooks narrated by Alan Rickman | Audible.com", subtitle: "Audible 上艾倫·瑞克曼朗讀的有聲書清單", year: 2000, url: "https://www.audible.com/search?searchNarrator=Alan+Rickman", tags: ["有聲書"], notes: [] },
+
+  { id: 10118, type: "link", title: "英國版《GQ》1992 年 7 月號封面人物專訪：艾倫·瑞克曼：不被標籤化的表演者", subtitle: "", year: 1992, url: "https://www.gq-magazine.co.uk/article/alan-rickman-interview-1992-die-hard", tags: ["其他資料"], notes: [] },
+  { id: 10119, type: "link", title: "Alan Rickman: The Empire Interview | Empire", subtitle: "Empire 雜誌艾倫·瑞克曼長篇專訪", year: 2016, url: "https://www.empireonline.com/movies/features/alan-rickman-interview/", tags: ["其他資料"], notes: [] },
+  { id: 10120, type: "link", title: "「我替性愛戲裡的女演員感到難受」— 艾倫·瑞克曼談拍攝親密場景", subtitle: "艾倫·瑞克曼談《諾貝爾獎得主的兒子》Nobel Son 的親密戲", year: 2007, url: "https://fandomwire.com/i-felt-sorry-for-those-women-in-the-sx-scenes-harry-potter-star-alan-rickman-felt-guilty-after-his-bizarre-intimiate-scenes-in-his-romantic-movie-nobel-son/", tags: [], notes: [] },
+  { id: 10121, type: "link", title: "Comme des Garcons、Issey Miyake、Yohji Yamamoto", subtitle: "", year: 2006, url: "https://koke-shi.livejournal.com/8338.html", tags: ["其他資料"], notes: [] },
+  { id: 10122, type: "link", title: "Alan Rickman's 10 favourite songs of all time ", subtitle: "艾倫·瑞克曼最愛的 10 首歌", year: 2016, url: "https://faroutmagazine.co.uk/alan-rickman-10-favourite-songs-of-all-time/", tags: ["其他資料"], notes: [] },
+  { id: 10123, type: "link", title: "艾倫·瑞克曼在 Georgina Henry 的追悼會上致悼詞 | 衛報", subtitle: "", year: 2014, url: "https://www.theguardian.com/commentisfree/video/2014/mar/04/readers-tributes-georgina-henry-memorial-alan-rickman-video", tags: ["其他資料"], notes: [] },
+  { id: 10124, type: "link", title: "10 個關於艾倫·瑞克曼的驚人事實 | Mental Floss", subtitle: "", year: 2016, url: "https://www.mentalfloss.com/article/92438/10-surprising-facts-about-alan-rickman", tags: ["其他資料"], notes: [] },
+  { id: 10125, type: "link", title: "10 Stories About Alan Rickman That Prove He Was a Man of Endless Kindness | Bright Side", subtitle: "Bright Side：10 個證明艾倫·瑞克曼無比善良的故事", year: 2016, url: "https://brightside.me/articles/10-stories-about-alan-rickman-that-prove-he-was-a-man-of-endless-kindness-800762/", tags: ["其他資料"], notes: [] },
+  { id: 10126, type: "link", title: "提姆·羅賓斯 Tim Robbins 回顧《天生贏家》25 週年 | EW", subtitle: "Entertainment Weekly 訪問", year: 2017, url: "https://ew.com/movies/2017/09/04/tim-robbins-bob-roberts-25-years-later/", tags: [], notes: [] },
+
+  { id: 10127, type: "link", title: "Beyond the Wand", subtitle: "跩哥馬份 Tom Felton 的回憶錄 / 《魔杖之外》", year: 2022, url: "https://www.amazon.com/Beyond-Wand-Mayhem-Growing-Wizard-ebook/dp/B09ZXMG884", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10128, type: "link", title: "This Much Is True", subtitle: "芽菜教授／米瑞安·瑪格萊斯 Miriam Margolyes 回憶錄", year: 2021, url: "https://www.amazon.com/This-Much-True-Miriam-Margolyes/dp/1529379903", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10129, type: "link", title: "Madly, Deeply — The Diaries of Alan Rickman", subtitle: "艾倫·瑞克曼日記英文原文版", year: 2022, url: "https://www.amazon.com/Madly-Deeply-Diaries-Alan-Rickman/dp/1250847958", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10130, type: "link", title: "Alan Rickman on Jaques: Performing Shakespeare", subtitle: "艾倫·瑞克曼談莎劇角色 Jaques：演繹莎士比亞", year: 2017, url: "https://www.amazon.com/Alan-Rickman-ebook/dp/B0713SYQ22", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10131, type: "link", title: "The Boy Who Lived", subtitle: "哈利波特特技演員 David Holmes 回憶錄", year: 2024, url: "https://www.amazon.com/Boy-Who-Lived-foreword-Radcliffe-ebook/dp/B0D3LMKHLG", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10132, type: "link", title: "Get Me the Urgent Biscuits", subtitle: "艾倫朋友的助理的回憶錄", year: 2017, url: "https://www.amazon.com/-/zh_TW/Sweetpea-Slight-ebook/dp/B08BZ9HL9H/", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10133, type: "link", title: "How Do You Want Me?", subtitle: "艾倫室友／朋友 茹比·韋克斯 Ruby Wax 回憶錄", year: 2018, url: "https://www.amazon.com/How-Do-You-Want-Me-ebook/dp/B07FSZD9ZW", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10134, type: "link", title: "The Opposite of Butterfly Hunting", subtitle: "露娜／伊凡娜·林奇 Evanna Lynch 回憶錄", year: 2022, url: "https://www.amazon.com/Opposite-Butterfly-Hunting-Tragedy-Growing/dp/0593358414", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10135, type: "link", title: "李安傳《十年一覺電影夢》— 國家圖書館發表會", subtitle: "李安回憶拍《理性與感性》Sense and Sensibility 時與艾倫·瑞克曼等人合作的點滴", year: 2016, url: "https://www.ncl.edu.tw/information_237_18884.html", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10136, type: "link", title: "Ark 45, The Journal of the Royal College of Art", subtitle: "艾倫·瑞克曼在皇家藝術學院（RCA）就讀時期參與設計", year: 1969, url: "https://pallantbookshop.com/product/ark-45-journal-royal-college-art/", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10137, type: "link", title: "Ark 46, The Journal of the Royal College of Art", subtitle: "艾倫·瑞克曼在皇家藝術學院（RCA）就讀時期參與設計", year: 1970, url: "https://pallantbookshop.com/product/ark-46-journal-royal-college-art-copy/", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10138, type: "link", title: "《SCREEN》雜誌 艾倫·瑞克曼特刊復刻號 | SCREEN STORE 日本", subtitle: "", year: 2016, url: "https://screenstore.jp/shopdetail/000000003799/", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10139, type: "link", title: "Shakespeare On Stage Vol.2", subtitle: "含艾倫談 Jaques", year: 2007, url: "https://www.amazon.com/Shakespeare-Stage-Twelve-Leading-Actors-ebook/dp/B06XPT449B", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10140, type: "link", title: "Books | Bush Theatre | Shepherd's Bush, London", subtitle: "Bush Theatre 出版品（艾倫早期演出地點）", year: 2016, url: "https://www.bushtheatre.co.uk/shop/books/", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10141, type: "link", title: "GQ Cool", subtitle: "GQ 雜誌攝影集", year: 1999, url: "https://www.amazon.com/-/zh_TW/GQ-Cool-Jo-Levin/dp/186205603X", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10142, type: "link", title: "蜷川幸雄：千刃千眼 | PAR 表演藝術雜誌", subtitle: "", year: 2016, url: "https://par.npac-ntch.org/tw/publish/bookDetail/1450167991387655", tags: ["書籍&雜誌", "Tango at the End of Winter"], notes: [] },
+  { id: 10143, type: "link", title: "Sense & Sensibility Screenplay & Diaries", subtitle: "艾瑪·湯普森 Emma Thompson 著 — Internet Archive PDF", year: 1995, url: "https://archive.org/details/emma-thompson-clive-coote-lindsay-doran-the-sense-and-sensibility-screenplay-dia", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10144, type: "link", title: "The Royal Court Theatre Inside Out", subtitle: "皇家宮廷劇院幕後紀錄（含艾倫手繪的樹狀圖和瑞秋科里舞台劇相關文章）", year: 2007, url: "https://www.amazon.com/Royal-Court-Theatre-Inside-Out/dp/1840027630", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10145, type: "link", title: "Telling Some Tales", subtitle: "艾倫朋友 Anna Massey 的回憶錄；艾倫撰寫推薦序", year: 2006, url: "https://www.amazon.com/Telling-Some-Tales-Anna-Massey/dp/0091796458", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10146, type: "link", title: "The Half", subtitle: "Simon Annand 攝影集", year: 2008, url: "https://www.amazon.com/Half-Simon-Annand/dp/0571237738", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10147, type: "link", title: "Harry Potter Film Vault Complete Series Boxed Set", subtitle: "哈利波特電影設定集全套", year: 2021, url: "https://www.amazon.com/Harry-Potter-Vault-Complete-Special/dp/1647221080", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10148, type: "link", title: "Harry Potter Film Wizardry Updated Edition", subtitle: "Brian Sibley 著", year: 2018, url: "https://www.amazon.com/Harry-Potter-Film-Wizardry-Celebrated/dp/0062878948", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10149, type: "link", title: "Harry Potter Film Wizardry Revised and Expanded", subtitle: "Brian Sibley 著", year: 2012, url: "https://www.amazon.com/Harry-Potter-Wizardry-Revised-Expanded/dp/0062215507", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10150, type: "link", title: "Harry Potter Page to Screen Updated Edition", subtitle: "Bob McCabe 著", year: 2018, url: "https://www.amazon.com/Harry-Potter-Page-Screen-Filmmaking/dp/0062878905", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10151, type: "link", title: "Harry Potter Page to Screen Collector's Edition", subtitle: "哈利波特：從書頁到大銀幕 收藏版", year: 2011, url: "https://www.amazon.com/-/zh_TW/Harry-Potter-Page-Screen-Filmmaking/dp/1612185916", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10152, type: "link", title: "The Winter Guest 劇本", subtitle: "Sharman MacDonald 著", year: 1997, url: "https://www.amazon.com/-/zh_TW/Sharman-MacDonald/dp/0571194796", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10153, type: "link", title: "Robin Hood Prince of Thieves The Official Movie Book", subtitle: "Garth Pearce 著", year: 1991, url: "https://www.amazon.com/-/zh_TW/Garth-Pearce/dp/B000MYV0J4", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10154, type: "link", title: "Die Hard: The Ultimate Visual History", subtitle: "終極警探視覺史", year: 2018, url: "https://www.sanmin.com.tw/product/index/006780270", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10156, type: "link", title: "An Awfully Big Adventure by Beryl Bainbridge | Goodreads", subtitle: "《新愛情樂園》原著小說", year: 1995, url: "https://www.goodreads.com/book/show/2020312", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10157, type: "link", title: "Alan Rickman - YourCelebrityMagazines", subtitle: "雜誌收藏網站（含艾倫·瑞克曼歷年雜誌封面索引）", year: 2016, url: "https://www.yourcelebritymagazines.com/collections/alan-rickman", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10158, type: "link", title: "British GQ magazine - July 1992 - Alan Rickman cover", subtitle: "英國 GQ 1992 年 7 月號（艾倫·瑞克曼封面）", year: 1992, url: "https://www.crazyaboutmagazines.com/ourshop/prod_2150662-British-GQ-magazine-July-1992-Alan-Rickman-cover.html", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10168, type: "link", title: "TRULY MADLY DEEPLY 劇本", subtitle: "安東尼·明格拉編劇《人鬼未了情》Truly Madly Deeply 原著劇本", year: 1992, url: "https://www.amazon.com/-/zh_TW/TRULY-MADLY-DEEPLY-Anthony-Minghella/dp/0413640000", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10169, type: "link", title: "明格拉劇作集第二冊 Minghella Plays: Two", subtitle: "收錄《人鬼未了情》Truly Madly Deeply 等劇作", year: 1997, url: "https://www.amazon.com/-/zh_TW/dp/B01FJ0SLZG", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10170, type: "link", title: "《魔杖之外：湯姆．跩哥馬份．費爾頓的成長與掙扎》", subtitle: "Tom Felton 回回忆錄繁體中文版", year: 2023, url: "https://ipac.nlpi.edu.tw/bookDetail/792545?qs=%7B%5Eurl3%2C%2Fsearch4%2Cquery%5E%3A%7B%5E%2Cs23%2CFullText4%2C%2Cs13%2C%E9%AD%94%E6%9D%96%E4%B9%8B%E5%A4%96%5E%7D%7D", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10171, type: "link", title: "《理性與感性》艾瑪·湯普遜劇本與拍片日記", subtitle: "Sense & Sensibility Screenplay & Diaries 繁體中文版（艾倫飾布蘭登上校）", year: 1996, url: "https://ipac.nlpi.edu.tw/bookDetail/218725?qs=%7B%5Eurl3%2C%2Fsearch4%2Cquery%5E%3A%7B%5E%2Cf13%2CExecCode4%2C%2Cf23%2Cwebpac.dataType.book4%2C%2Cs23%2CFullText4%2C%2Cs13%2C%E7%90%86%E6%80%A7%E8%88%87%E6%84%9F%E6%80%A7%20%5E%7D%7D&serialNo=15", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10172, type: "link", title: "A Little Like Drowning (BBC 1989-03-20) — Anthony Minghella", subtitle: "BBC 廣播劇，艾倫·瑞克曼飾 Alfredo", year: 1989, url: "https://archive.org/details/anthony-minghella-a-little-like-drowning-bbc-1989-03-20", tags: [], notes: [] },
+  { id: 10173, type: "youtube", title: "The Space Bar — 艾倫·瑞克曼配音 PC 遊戲", subtitle: "PC 點擊冒險遊戲，艾倫·瑞克曼飾雙胞胎 My Parker / Ty Parker（遊戲畫面）", year: 1997, url: "https://youtu.be/pEm0fGquDy8", tags: [], notes: [] },
+  { id: 10174, type: "link", title: "哈利波特仙境—Google Doodle 向艾倫·瑞克曼致敬", subtitle: "2023-04-30 Google 首頁紀念塗鴉（哈利波特仙境主題）", year: 2023, url: "https://www.hpfl.net/forum/thread/37625", tags: ["其他資料"], notes: [] },
+  { id: 10175, type: "youtube", title: "艾倫·瑞克曼最後錄製的影片 — 為敘利亞難民募款", subtitle: "Save the Children / Refugee Council × 牛津大學學生募款短片，艾倫人生最後錄製作品（2015 年底，逝世前一個月）", year: 2015, url: "https://youtu.be/HkiMz-e2ZcE", tags: ["其他資料"], notes: [] },
+  { id: 10176, type: "youtube", title: "Alan reads Shakespeare's Sonnet 130", subtitle: "艾倫朗讀莎士比亞十四行詩第 130 首（收錄於 2002 年群星朗誦專輯《When Love Speaks》）", year: 2002, url: "https://youtu.be/xP06F0yynic", tags: ["其他資料"], notes: [] },
+  { id: 10177, type: "youtube", title: "紀錄片《Alan》（2016）— 艾倫·瑞克曼 2007 年訪問喬治亞第比利斯", subtitle: "導演 Giga Agladze；記錄艾倫與喬治亞導演 Robert Sturua 長年友誼，含 Hamlet 演出片段", year: 2016, url: "https://youtu.be/XuX9MfDvfoI", tags: [], notes: [] },
+  { id: 10178, type: "link", title: "紀錄片《Alan》（2016）IMDb 頁面", subtitle: "導演 Giga Agladze；記錄艾倫·瑞克曼 2007 年訪問喬治亞第比利斯", year: 2016, url: "https://www.imdb.com/title/tt5842010/", tags: [], notes: [] },
+  { id: 10179, type: "youtube", title: "《瘋狂遊戲 Mesmer》BBC 紀錄片", subtitle: "BBC 介紹艾倫·瑞克曼 1994 年電影《瘋狂遊戲》（Franz Mesmer 的故事）", year: 1994, url: "https://youtu.be/aZ9TB5vEovc", tags: [], notes: [] },
+  { id: 10180, type: "youtube", title: "《冬末探戈》紀錄片（上）", subtitle: "蜷川幸雄執導舞台劇《冬末探戈》Tango at the End of Winter 製作幕後紀錄片（艾倫·瑞克曼飾 Sei）", year: 1991, url: "https://youtu.be/qUsd1-oH-N0", tags: [], notes: [] },
+  { id: 10181, type: "youtube", title: "《冬末探戈》紀錄片（下）", subtitle: "蜷川幸雄執導舞台劇《冬末探戈》Tango at the End of Winter 製作幕後紀錄片（艾倫·瑞克曼飾 Sei）", year: 1991, url: "https://youtu.be/NgTQHQiM5_c", tags: [], notes: [] },
+  { id: 10182, type: "youtube", title: "《理性與感性》紀錄片", subtitle: "李安執導電影《理性與感性》Sense and Sensibility 幕後紀錄片（艾倫·瑞克曼飾布蘭登上校）", year: 1995, url: "https://youtu.be/SGNPv77l9hQ", tags: [], notes: [] },
+  { id: 10183, type: "link", title: "彼得·凱爾 Peter Kyle 追憶艾倫·瑞克曼", subtitle: "工黨議員、艾倫·瑞克曼好友 Peter Kyle 的個人網誌悼念文（2016 年 1 月）", year: 2016, url: "http://www.peterkyle.co.uk/legacy/2016/01/15/alan_rickman_the_most_beautiful_fearless_person_i_ve_met/", tags: ["朋友回憶"], notes: [] },
+  { id: 10184, type: "link", title: "艾倫2007 年在母校Latymer Upper School 的演講", subtitle: "艾倫·瑞克曼回到母校 Latymer Upper School 致詞 — Reddit 整理", year: 2007, url: "https://www.reddit.com/r/AlanRickman/comments/1licubq/alan_rickman_gave_an_inspiring_speech_on_latymer/", tags: ["其他資料"], notes: [] },
+  { id: 10185, type: "link", title: "茱麗葉·史蒂芬森Juliet Stevenson談艾倫·瑞克曼", subtitle: "「他是一個真正沒有階級之分的人——在他的心裡，從來沒有高低之別。」 | Evening Standard", year: 2016, url: "https://www.standard.co.uk/showbiz/celebrity-news/juliet-stevenson-on-alan-rickman-he-was-more-than-an-actor-he-was-an-inspiration-a3157196.html", tags: ["朋友回憶"], notes: [] },
+  { id: 10186, type: "link", title: "艾倫在哈利波特拍攝現場幫 15 歲癌末男孩 Jay 圓夢 — HuffPost", subtitle: "艾倫·瑞克曼在《阿茲卡班的逃犯》片場為癌末男孩 Jay 圓夢的故事", year: 2017, url: "https://www.huffpost.com/entry/the-real-magic-alan-rickman-brought-to-harry-potter_n_59480884e4b0edb84c1496a6", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10187, type: "link", title: "賈斯汀·隆 Justin Long（《驚爆銀河系 Galaxy Quest》）回憶艾倫·瑞克曼", subtitle: "「我看過好幾次，有些身居高位的主管會在午餐時特地坐過來，想跟艾倫套交情（同時卻無視同桌其他「地位比較低」的人）。等他們起身準備離開時，看起來都有點困惑，也有點不太自在。艾倫會對我露出一個狡黠又心照不宣的微笑。我很喜歡那一刻——也喜歡其他一些我記得沒那麼清楚的時刻。」 | Instagram", year: 2021, url: "https://www.instagram.com/p/CKDMnZipR54/", tags: ["朋友回憶"], notes: [] },
+  { id: 10188, type: "link", title: "艾倫·瑞克曼與商姆·寇特內爵士 Sir Tom Courtenay 談《冤家偷很大 Gambit》", subtitle: "在某部電影裡假裝自己會開車的故事《終極警探 Die Hard》）", year: 2012, url: "https://www.indielondon.co.uk/Film-Review/gambit-alan-rickman-and-sir-tom-courtenay-interview/", tags: [], notes: [] },
+  { id: 10189, type: "youtube", title: "艾倫·瑞克曼解釋為什麼自己不喜歡在公眾場合討論《哈利波特》", subtitle: "因為這樣會對還沒看完故事的小朋友爆雷", year: 2010, url: "https://youtu.be/GZrV7_fRM4M", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10190, type: "link", title: "艾倫·瑞克曼影像回顧講座 A Life In Pictures ", subtitle: "拍哈利波特第一集的時候會遇到一個問題：童星每天只能工作固定的時數。所以有時候拍片現場會塞滿300個小孩，而且時間一到，他們全部都得帶開去寫作業。如果遇到我有和丹尼爾、魯伯特還有艾瑪同框的戲，劇組會先拍他們的正面，我則在旁邊搭戲、配合做反應。等到鏡頭轉過來要拍我時，站在對面的其實是一些33歲、身材矮小的替身，頭上還戴著假髮。所以在那些畫面裡，你看到的根本就不是丹尼爾的後腦勺。", year: 2015, url: "https://www.heyuguys.com/life-pictures-alan-rickman/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10191, type: "link", title: "艾倫·瑞克曼寫給哈利波特粉絲的告別信", subtitle: "", year: 2011, url: "https://www.independent.co.uk/arts-entertainment/films/news/alan-rickman-dead-read-his-heartfelt-goodbye-letter-to-harry-potter-fans-a6812066.html", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10192, type: "youtube", title: "《冬天的訪客》Winter Guest 採訪", subtitle: "艾倫·瑞克曼以導演身份在日本宣傳《冬天的訪客》Winter Guest ", year: 1998, url: "https://youtu.be/hUsj2O3dKuc", tags: [], notes: [] },
+  { id: 10193, type: "link", title: "Alan Rickman: A Life in Pictures — BAFTA 完整訪談（談哈利波特、Robin Hood、Die Hard）", subtitle: "BAFTA 生涯回顧長篇訪談，涵蓋石內卜、Sheriff of Nottingham、Hans Gruber", year: 2015, url: "https://youtu.be/dmidhqp_dTU", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10194, type: "link", title: "艾倫·瑞克曼MTV 採訪（2015）— 《A Little Chaos》", subtitle: "Josh Horowitz，2015年6月18日，談 A Little Chaos 與 Louis XIV", year: 2015, url: "https://youtu.be/XrWyoq6EFIo", tags: ["其他資料"], notes: [] },
+  { id: 10195, type: "link", title: "艾倫·瑞克曼 — Reel Pieces with Annette Insdorf（談《A Little Chaos》）", subtitle: "談執導 A Little Chaos、Kate Winslet 與 Versailles 路易十四", year: 2015, url: "https://youtu.be/UeCjvz_7kAw", tags: ["其他資料"], notes: [] },
+  { id: 10196, type: "link", title: "艾倫·瑞克曼 — TimesTalks 完整訪談（談石內卜與 Harry Potter）", subtitle: "《紐約時報》TimesTalks 長篇訪談，談 Snape、Harry Potter 與表演生涯", year: 2015, url: "https://youtu.be/y0UFutwJ-ow", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10197, type: "link", title: "艾倫·瑞克曼談石內卜、Truly Madly Deeply 與路易十四 — ABC One Plus One", subtitle: "談橫跨40年表演生涯，從 Snape 到 Harry Potter 到 Louis XIV", year: 2015, url: "https://youtu.be/flCtOMG7Muk", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10198, type: "link", title: "艾瑪·湯普遜回顧經典角色（GQ）— 提及艾倫·瑞克曼", subtitle: "Emma Thompson Breaks Down Her Most Iconic Characters，2025年12月，談 Sense and Sensibility、Harry Potter 與 Snape", year: 2025, url: "https://youtu.be/HBForfB_2lU", tags: ["朋友回憶"], notes: [] },
+  { id: 10199, type: "link", title: "魯伯特·葛林特（榮恩·衛斯理）臥底回答網友問題 — GQ Taiwan", subtitle: "提及艾倫·瑞克曼與《火盃的考驗》的趣事，談 Harry Potter、Snape", year: 2024, url: "https://youtu.be/QMv_17bVrgQ", tags: ["朋友回憶"], notes: [] },
+  { id: 10200, type: "link", title: "雪歌妮·薇佛回顧經典角色 | Vogue Taiwan", subtitle: "談 Galaxy Quest 與 Sigourney Weaver 的經典角色回顧", year: 2024, url: "https://youtu.be/-Dib6nPhSSc", tags: ["朋友回憶"], notes: [] },
+  { id: 10201, type: "link", title: "紐約餐廳老闆Keith McNally的回憶", subtitle: "A. R. 以前常來紐約，而且經常到我的餐廳吃飯，其中 Morandi 是他的最愛。13 年前我兒子喬治 6 歲的時候，艾倫來我位於西 11 街的家裡喝茶。他知道我兒子是個超級《哈利波特》迷，但當時他相當嚴肅地要求我，絕對不要提到他在電影裡演的角色。他說，他很討厭被小孩子認出是《哈利波特》裡的人。幸好，喬治對他根本一無所知，完全當他是陌生人。半個小時過去後，當艾倫發現我兒子真的完全沒認出他時，他開始稍微用一點他在《哈利波特》裡的角色語氣說話。喬治還是沒反應。這下子，這位男演員因為沒被認出來而顯得有點不是滋味，他乾脆直接火力全開，完全用他在《哈利波特》裡的那種聲音說話。眼看還是沒得到該有的反應，艾倫終於擺出了他的「石內卜臉」，對著喬治低沉地呢喃道：「現在...你知道我是誰了嗎？」", year: 2022, url: "https://www.instagram.com/p/Cj6QNFhMqyc/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 10202, type: "link", title: "Alan Rickman Bursary — Latymer Foundation", subtitle: "艾倫母校 Latymer Upper School 以其名義設立的助學金（Latymer Foundation）", year: 2016, url: "https://www.latymerfoundation.org/support-us/bursaries/alan-rickman-bursary/", tags: ["其他資料"], notes: [] },
+  { id: 10203, type: "link", title: "Words With Alan — WordPress 採訪資料庫", subtitle: "wordswithalan.wordpress.com", year: 2016, url: "https://wordswithalan.wordpress.com/", tags: ["其他資料"], notes: [] } ,
+  { id: 10204, type: "link", title: "The thing is to take the work seriously but to take yourself no seriously.", subtitle: "Judy Dench is quoting somebody else but I think she she said ： ", year: 2012, url: "https://www.instagram.com/reel/DMoMfMSxjV0/", tags: ["其他資料"], notes: [] }
+];
+
+const WW_DATA = [
+  { id: 20001, type: "audio", title: "Bullseye with Jesse Thorn: Alan Rickman & Sacha Jenkins", subtitle: "《美人情園》、終極警探、與 J.K. 羅琳的秘密對話 (Podcast)", year: 2015, url: "https://wordswithalan.wordpress.com/2015/06/30/bullseye-with-jesse-thorn-alan-rickman-sacha-jenkins/", tags: ["其他資料"], notes: [] },
+  { id: 20002, type: "link", title: "Alan Rickman & Helen McCrory: 'With us, it's mostly about laughter and the odd martini'", subtitle: "艾倫與 Helen McCrory 合作《美人情園》的回憶", year: 2015, url: "https://wordswithalan.wordpress.com/2015/04/04/alan-rickman-helen-mccrory-with-us-its-mostly-about-laughter-and-the-odd-martini/", tags: ["朋友回憶"], notes: [] },
+  { id: 20003, type: "link", title: "An Interview with Alan Rickman (Design Observer)", subtitle: "艾倫談在 RCA 學習平面設計的歲月", year: 2014, url: "https://wordswithalan.wordpress.com/2014/12/04/an-interview-with-alan-rickman-2/", tags: ["其他資料"], notes: [] },
+  { id: 20004, type: "link", title: "Alan Rickman on Directing 'A Little Chaos,' Gardening and Kate Winslet's Green Thumb", subtitle: "Variety 訪談：執導《美人情園》、園藝與凱特·溫絲蕾", year: 2014, url: "https://wordswithalan.wordpress.com/2014/11/10/alan-rickman-on-directing-a-little-chaos-gardening-and-kate-winslets-green-thumb/", tags: ["其他資料"], notes: [] },
+  { id: 20005, type: "link", title: "Watch Kate Winslet meet the king in Alan Rickman's 'A Little Chaos'", subtitle: "TIFF 閉幕片《美人情園》首映報導 (Entertainment Weekly)", year: 2014, url: "https://wordswithalan.wordpress.com/2014/09/09/watch-kate-winslet-meet-the-king-in-alan-rickmans-a-little-chaos/", tags: ["其他資料"], notes: [] },
+  { id: 20006, type: "link", title: "Alan Rickman & Rupert Grint On 'CBGB,' Reuniting Post-'Potter' And Favorite Halloween Costumes", subtitle: "艾倫與 Rupert Grint (榮恩) 談《龐克地下城》", year: 2013, url: "https://wordswithalan.wordpress.com/2013/10/12/alan-rickman-rupert-grint-on-cbgb-reuniting-post-potter-and-favorite-halloween-costumes/", tags: ["其他資料", "朋友回憶"], notes: [] },
+  { id: 20007, type: "link", title: "'Harry Potter': Alan Rickman looks back on decade of dark magic", subtitle: "回顧飾演石內卜的十年 (Los Angeles Times)", year: 2011, url: "https://wordswithalan.wordpress.com/2011/12/30/harry-potter-alan-rickman-looks-back-on-decade-of-dark-magic/", tags: ["哈利波特:J.K.羅琳、小說與編劇", "哈利波特:爛導演大衛葉慈"], notes: [] },
+  { id: 20008, type: "link", title: "Q&A: Alan Rickman and Jerry O'Connell (Seminar, NYC Guide)", subtitle: "艾倫與 Jerry O'Connell 談百老匯《Seminar》",year: 2011, url: "https://wordswithalan.wordpress.com/2011/12/21/qa-alan-rickman-and-jerry-oconnell/", tags: ["其他資料"], notes: [] },
+  { id: 20009, type: "link", title: "PLAYBILL'S BRIEF ENCOUNTER With Seminar and 'Harry Potter' Star Alan Rickman", subtitle: "Playbill 專訪：《Seminar》與哈利波特", year: 2011, url: "https://wordswithalan.wordpress.com/2011/11/26/playbills-brief-encounter-with-seminar-and-harry-potter-star-alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20010, type: "link", title: "Alan Rickman: Truly, deeply appealing (Los Angeles Times)", subtitle: "談石內卜與《Seminar》(洛杉磯時報)", year: 2011, url: "https://wordswithalan.wordpress.com/2011/11/20/alan-rickman-truly-deeply-appealing/", tags: ["其他資料"], notes: [] },
+  { id: 20011, type: "link", title: "Alan Rickman returns to Broadway with attitude (Huffington Post)", subtitle: "艾倫強勢回歸百老匯《Seminar》(哈芬登郵報)", year: 2011, url: "https://wordswithalan.wordpress.com/2011/11/18/alan-rickman-returns-to-broadway-with-attitude/", tags: ["其他資料"], notes: [] },
+  { id: 20012, type: "link", title: "A Workshop in Writing, Not Wizardry (New York Times)", subtitle: "《Seminar》(紐約時報)", year: 2011, url: "https://wordswithalan.wordpress.com/2011/11/10/a-workshop-in-writing-not-wizardry/", tags: ["其他資料"], notes: [] },
+  { id: 20013, type: "link", title: "Alan Rickman – Top 10 Tunes (Two Paddocks)", subtitle: "", year: 2011, url: "https://wordswithalan.wordpress.com/2011/11/06/alan-rickman-top-10-tunes/", tags: ["其他資料"], notes: [] },
+  { id: 20014, type: "link", title: "Alan Rickman on Severus Snape & JK Rowling's secret (RTE ten)", subtitle: "艾倫談 J.K.羅琳透露的「那一點點資訊」(愛爾蘭 RTE)", year: 2011, url: "https://wordswithalan.wordpress.com/2011/07/20/alan-rickman-3/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 20015, type: "link", title: "Alan Rickman & Helena Bonham Carter Interview For 'HP: Deathly Hallows Pt 2'", subtitle: "艾倫與海倫娜·寶漢·卡特談《死神的聖物Ⅱ》(Flicks and Bits)", year: 2011, url: "https://wordswithalan.wordpress.com/2011/07/07/alan-rickman-helena-bonham-carter-interview-for-harry-potter-and-the-deathly-hallows-part-2/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 20016, type: "link", title: "Harry Potter and the Deathly Hallows: Part 2 – Production Notes (excerpts)", subtitle: "《死神的聖物Ⅱ》華納兄弟官方筆記摘錄", year: 2011, url: "https://wordswithalan.wordpress.com/2011/07/01/harry-potter-and-the-deathly-hallows-part-2-production-notes-excerpts/", tags: ["哈利波特:劇本與刪減片段整理"], notes: [] },
+  { id: 20017, type: "link", title: "Harry Potter: Casting the spell — excerpts (Entertainment Weekly)", subtitle: "EW 哈利波特選角特輯：石內卜服裝與身分認同", year: 2011, url: "https://wordswithalan.wordpress.com/2011/07/01/harry-potter-casting-the-spell-excerpts/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 20018, type: "link", title: "Alan Rickman: Snape, vita da cattivo (TrovaCinema / SnitchSeeker)", subtitle: "義大利媒體專訪：石內卜為何被小孩子喜歡", year: 2011, url: "https://wordswithalan.wordpress.com/2011/06/27/alan-rickman-snape-life-as-a-villain/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 20019, type: "link", title: "Alan Rickman Skips Die Hard, Talks About The Theatah at BAM (The L Magazine)", subtitle: "BAM 電影院問答：艾倫談《終極警探》與舞台生涯", year: 2011, url: "https://wordswithalan.wordpress.com/2011/02/09/alan-rickman-skips-die-hard-talks-about-the-theatah-at-bam/", tags: ["其他資料"], notes: [] },
+  { id: 20020, type: "link", title: "Alan Rickman Is a Corrupt Banker (in John Gabriel Borkman) — Village Voice", subtitle: "艾倫談聲音與易卜生《約翰·加布里埃爾·博克曼》", year: 2011, url: "https://wordswithalan.wordpress.com/2011/01/05/alan-rickman-is-a-corrupt-banker-in-john-gabriel-borkman/", tags: ["其他資料"], notes: [] },
+  { id: 20021, type: "link", title: "Mapping the Dark Heart of Strindberg — Creditors (New York Times)", subtitle: "艾倫執導史特林堡《Creditors》：論「less is more」", year: 2010, url: "https://wordswithalan.wordpress.com/2010/04/07/mapping-the-dark-heart-of-strindberg/", tags: ["其他資料"], notes: [] },
+  { id: 20022, type: "link", title: "Master of the Dark Arts (Saga Magazine, July 2009)", subtitle: "《混血王子的背叛》", year: 2009, url: "https://wordswithalan.wordpress.com/2009/07/01/master-of-the-dark-arts/", tags: ["其他資料"], notes: [] },
+  { id: 20023, type: "link", title: "The Reluctant Villain (University Observer / Otwo)", subtitle: "都柏林大學訪談：艾倫談為何不認為自己只能演反派", year: 2009, url: "https://wordswithalan.wordpress.com/2009/04/28/the-reluctant-villain/", tags: ["其他資料"], notes: [] },
+  { id: 20024, type: "link", title: "Premier Vintage — Alan Rickman profile (The Herald Magazine)", subtitle: "赫拉德雜誌：科學驗證最完美聲音之一", year: 2009, url: "https://wordswithalan.wordpress.com/2009/03/21/premier-vintage/", tags: ["其他資料"], notes: [] },
+  { id: 20025, type: "link", title: "Rickman has plenty of bottle (The Northern Echo)", subtitle: "艾倫談《戀戀酒鄉》：學品酒、膽量十足", year: 2009, url: "https://wordswithalan.wordpress.com/2009/03/12/rickman-has-plenty-of-bottle/", tags: ["其他資料"], notes: [] },
+  { id: 20026, type: "link", title: "Patricia Sheridan's Breakfast With … Alan Rickman (Pittsburgh Post-Gazette)", subtitle: "早餐訪談：艾倫談演員不評判角色的信念", year: 2008, url: "https://wordswithalan.wordpress.com/2008/12/08/rickman-never-mixes-acting-with-personal-life/", tags: ["其他資料"], notes: [] },
+  { id: 20027, type: "link", title: "Alan Rickman for 'Nobel Son' (Dark Horizons)", subtitle: "《諾貝爾獎得主的兒子》宣傳訪談", year: 2008, url: "https://wordswithalan.wordpress.com/2008/12/07/alan-rickman-for-nobel-son/", tags: ["Nav"], notes: [] },
+  { id: 20028, type: "link", title: "Alan Rickman plays a prize-winning pain (NYT Syndicate / Reading Eagle)", subtitle: "", year: 2008, url: "https://wordswithalan.wordpress.com/2008/12/05/alan-rickman-plays-a-prize-winning-pain/", tags: ["其他資料"], notes: [] },
+  { id: 20029, type: "link", title: "Alan Rickman Interview — Nobel Son (Buzzine, Dec. 2008)", subtitle: "Buzzine 訪談：自我放縱的角色與《愛麗絲夢遊仙境》拍片現場", year: 2008, url: "https://wordswithalan.wordpress.com/2008/12/05/alan-rickman-interview-2/", tags: ["其他資料"], notes: [] },
+  { id: 20030, type: "link", title: "Alan Rickman Interview — Nobel Son (MoviesOnline, Dec. 2008)", subtitle: "洛杉磯 Culver Studios 現場訪談：《諾貝爾獎得主的兒子》", year: 2008, url: "https://wordswithalan.wordpress.com/2008/12/04/alan-rickman-interview/", tags: ["其他資料"], notes: [] },
+  { id: 20031, type: "link", title: "Interview: Alan Rickman on 'Nobel Son' (IFC film news)", subtitle: "IFC 訪談：為何艾倫從未獲得奧斯卡提名？", year: 2008, url: "https://wordswithalan.wordpress.com/2008/12/04/interview-alan-rickman-on-nobel-son/", tags: ["其他資料"], notes: [] },
+  { id: 20032, type: "link", title: "Alan Rickman takes the prize (Hollywood & Fine)", subtitle: "訪談：談歐巴馬當選與《諾貝爾獎得主的兒子》", year: 2008, url: "https://wordswithalan.wordpress.com/2008/12/01/alan-rickman-takes-the-prize/", tags: ["其他資料"], notes: [] },
+  { id: 20033, type: "link", title: "Q&A: Alan Rickman — Bottle Shock (Back Stage West)", subtitle: "艾倫談《戀戀酒鄉》", year: 2008, url: "https://wordswithalan.wordpress.com/2008/08/21/qa-alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20034, type: "link", title: "Alan Rickman's Canadian memories (Toronto Star)", subtitle: "多倫多星報：艾倫對加拿大的深厚情感", year: 2008, url: "https://wordswithalan.wordpress.com/2008/08/05/alan-rickmans-canadian-memories/", tags: ["其他資料"], notes: [] },
+  { id: 20035, type: "link", title: "A mild shock: Alan Rickman is not a snob (San Diego Union-Tribune)", subtitle: "聖地牙哥聯合論壇報", year: 2008, url: "https://wordswithalan.wordpress.com/2008/08/14/a-mild-shock-alan-rickman-is-not-a-snob/", tags: ["其他資料"], notes: [] },
+  { id: 20036, type: "link", title: "Alan Rickman Interview, Bottle Shock (MoviesOnline, Aug. 2008)", subtitle: "MoviesOnline 訪談：《戀戀酒鄉》", year: 2008, url: "https://wordswithalan.wordpress.com/2008/08/08/alan-rickman-interview-bottle-shock/", tags: ["其他資料"], notes: [] },
+  { id: 20037, type: "link", title: "Rickman, the epitome of Englishness (Washington Times)", subtitle: "華盛頓時報：科學界認證最完美的人類男性聲音", year: 2008, url: "https://wordswithalan.wordpress.com/2008/08/08/rickman-the-epitome-of-englishness/", tags: ["其他資料"], notes: [] },
+  { id: 20038, type: "link", title: "Fine wine or bucket of cluck, Rickman's ready to dive in (Chicago Tribune)", subtitle: "《戀戀酒鄉》", year: 2008, url: "https://wordswithalan.wordpress.com/2008/08/08/fine-wine-or-bucket-of-cluck-rickmans-ready-to-dive-in/", tags: ["其他資料"], notes: [] },
+  { id: 20039, type: "link", title: "Alan Rickman, the comedic corker (Los Angeles Times)", subtitle: "《戀戀酒鄉》", year: 2008, url: "https://wordswithalan.wordpress.com/2008/08/16/alan-rickman-the-comedic-corker/", tags: ["其他資料"], notes: [] },
+  { id: 20040, type: "link", title: "Alan Rickman Relishes New View of British Snobbery (Film Monthly)", subtitle: "「我不想談《哈利波特》，我想保護小朋友們對《哈利波特》的那份純真，讓他們可以一直保有屬於自己的魔法世界。」（2008）", year: 2008, url: "https://wordswithalan.wordpress.com/2008/07/27/alan-rickman-relishes-new-view-of-british-snobbery/", tags: ["艾倫拍哈利波特的幕後小故事"], notes: [] },
+  { id: 20041, type: "link", title: "Sundance Diary: Alan Rickman talks 'Harry Potter'…well, sorta (EW)", subtitle: "日舞影展晚宴後訪談：《戀戀酒鄉》首映與哈利波特", year: 2008, url: "https://wordswithalan.wordpress.com/2008/01/24/sundance-diary-alan-rickman-talks-harry-potter-well-sorta/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 20042, type: "link", title: "Alan Rickman slices Quint's throat as they talk SWEENEY TODD (Ain't It Cool News)", subtitle: "AICN 訪談：《瘋狂理髮師》", year: 2008, url: "https://wordswithalan.wordpress.com/2008/01/01/alan-rickman-slices-quints-throat-as-they-talk-sweeney-todd/", tags: ["其他資料"], notes: [] },
+  { id: 20043, type: "audio", title: "Rickman Gives Voice to 'Sweeney Todd' Nemesis (NPR All Things Considered)", subtitle: "《瘋狂理髮師》（編按：艾倫說 Would you like some cereal? Or would you like some more milk, perhaps?的聲音超好聽 by玄）", year: 2007, url: "https://wordswithalan.wordpress.com/2007/12/20/rickman-gives-voice-to-sweeney-todd-nemesis/", tags: ["其他資料"], notes: [] },
+  { id: 20044, type: "link", title: "Alan Rickman Relishes The Dichotomy of His Film Roles (Hartford Courant)", subtitle: "哈特福德信使報：艾倫談 Claridge's 與工人階級出身", year: 2007, url: "https://wordswithalan.wordpress.com/2007/12/16/alan-rickman-relishes-the-dichotomy-of-his-film-roles/", tags: ["其他資料"], notes: [] },
+  { id: 20045, type: "link", title: "The villain voice (Time Out Chicago)", subtitle: "《瘋狂理髮師》", year: 2007, url: "https://wordswithalan.wordpress.com/2007/12/13/the-villain-voice/", tags: ["其他資料"], notes: [] },
+  { id: 20046, type: "link", title: "Attend the Tale: 'Sweeney Todd' Exclusive with Alan Rickman (BroadwayWorld)", subtitle: "BroadwayWorld 獨家：艾倫談提姆·波頓執導音樂電影", year: 2007, url: "https://wordswithalan.wordpress.com/2007/12/11/attend-the-tale-sweeney-todd-exclusive-with-alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20047, type: "link", title: "Prize Giving 2007 Speech by Guest of Honour (Latymer Upper School)", subtitle: "艾倫在母校 Latymer 頒獎典禮的致詞全文", year: 2007, url: "https://wordswithalan.wordpress.com/2007/09/27/prize-giving-2007-speech-by-guest-of-honour/", tags: ["其他資料"], notes: [] },
+  { id: 20048, type: "link", title: "An enigma wrapped in a dark cape (The West Australian)", subtitle: "艾倫談《雪季過客》與不喜歡被貼標籤 ", year: 2007, url: "https://wordswithalan.wordpress.com/2007/08/15/an-enigma-wrapped-in-a-dark-cape/", tags: ["其他資料"], notes: [] },
+  { id: 20049, type: "link", title: "His master's voice (The Advertiser)", subtitle: "廣告人報：聲音、石內卜與《雪季過客》", year: 2007, url: "https://wordswithalan.wordpress.com/2007/08/04/his-masters-voice/", tags: ["其他資料"], notes: [] },
+  { id: 20050, type: "link", title: "One more for the rogue (The Age)", subtitle: "墨爾本時代報：艾倫與《雪季過客》中最像自己的角色", year: 2007, url:"https://wordswithalan.wordpress.com/2007/07/29/one-more-for-the-rogue/", tags: ["其他資料"], notes: [] },
+  { id: 20051, type: "link", title: "Exclusive Interview: Alan Rickman (Moviehole)", subtitle: "Moviehole 獨家：《雪季過客》與「盡力而為」的角色哲學", year: 2007, url: "https://wordswithalan.wordpress.com/2007/05/04/exclusive-interview-alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20052, type: "link", title: "Play your cards right, and you're a hero (The Times)", subtitle: "泰晤士報：艾倫談《香水》中「完全沒有潛台詞」的父親角色", year: 2006, url: "https://wordswithalan.wordpress.com/2006/12/14/play-your-cards-right-and-youre-a-hero/", tags: ["其他資料"], notes: [] },
+  { id: 20053, type: "link", title: "'Snowcake' blessing for Alan Rickman (Toronto Sun)", subtitle: "多倫多太陽報：艾倫談在 Wawa 拍電影", year: 2006, url: "https://wordswithalan.wordpress.com/2006/12/14/snowcake-blessing-for-alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20054, type: "link", title: "They came for goose, but Stayed For Buttered Tarts (National Post)", subtitle: "加拿大全國郵報：《雪季過客》劇組在加拿大 Wawa 的美食回憶", year: 2006, url: "https://wordswithalan.wordpress.com/2006/12/12/they-came-for-goose-but-stayed-for-buttered-tarts-snowcake/", tags: ["其他資料"], notes: [] },
+  { id: 20055, type: "link", title: "Alan Rickman And Marc Evans On Snow Cake (Film 4)", subtitle: "《雪季過客》、雪歌妮·薇佛", year: 2006, url: "https://wordswithalan.wordpress.com/2006/08/19/alan-rickman-and-marc-evans-on-snow-cake/", tags: ["其他資料"], notes: [] },
+  { id: 20056, type: "link", title: "A man for all seasons (The Scotsman)", subtitle: "我以前從未談論過《我的名字叫瑞秋·科里》，因為這部劇與我無關，而且我一直以來都非常保護瑞秋的父母Cindy和Craig，以及瑞秋本人 & Two things stick in my mind: one was that the writing didn’t feel as if it wanted to be trapped on a page for ever, it wanted to be spoken. The second is, I might not have read that paper, just as I have not got round to reading one today – I might not have known. &《雪季過客》I know Rachel only as I know any character, the way I know Alex Hughes, say, the man I play in Snowcake, who is probably more like me than anyone I have ever played. He is very close to me, because I enjoy playing somebody who is just doing his best – that’s me.", year: 2006, url: "https://wordswithalan.wordpress.com/2006/07/30/a-man-for-all-seasons/", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 20057, type: "link", title: "Interview with Alan Rickman; co-editor, director — Rachel Corrie education pack", subtitle: "皇家宮廷劇院教育訪談：艾倫分享讀到瑞秋·科里電子郵件的契機", year: 2005, url: "https://wordswithalan.wordpress.com/2005/10/11/interview-with-alan-rickman-co-editor-director/", tags: ["我的名字是瑞秋·科里"], notes: [] },
+  { id: 20058, type: "link", title: "When stars fall on Wawa (Macleans.ca)", subtitle: "加拿大 Macleans：雪歌妮·薇佛與艾倫在 Wawa 拍攝《雪季過客》", year: 2005, url: "https://wordswithalan.wordpress.com/2005/05/06/when-stars-fall-on-wawa/", tags: ["其他資料"], notes: [] },
+  { id: 20059, type: "link", title: "Festivals actually changed my life – Rickman (The Scotsman)", subtitle: "蘇格蘭人報", year: 2004, url: "https://wordswithalan.wordpress.com/2004/08/09/festivals-actually-changed-my-life-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20060, type: "link", title: "Interview with Alan Rickman (HBO, Something the Lord Made)", subtitle: "《天賜良醫》艾倫談飾演真實歷史人物 Alfred Blalock 的責任感", year: 2004, url: "https://wordswithalan.wordpress.com/2004/05/01/interview-with-alan-rickman-2/", tags: ["其他資料"], notes: [] },
+  { id: 20061, type: "link", title: "Lust, actually (Edinburgh Student Newspaper)", subtitle: "愛丁堡學生報：艾倫談《愛是您·愛是我》與世界盃橄欖球賽", year: 2003, url: "https://wordswithalan.wordpress.com/2003/12/03/lust-actually/", tags: ["其他資料"], notes: [] },
+  { id: 20062, type: "link", title: "Tribute to Michael Kamen (Royal Academy of Music, 2003)", subtitle: "艾倫在Michael Kamen追思音樂會上的悼詞全文", year: 2003, url: "https://wordswithalan.wordpress.com/2003/11/22/tribute-to-michael-kamen/", tags: [], notes: [] },
+  { id: 20063, type: "link", title: "An interview with Alan Rickman (handbag.com, Nov. 2003)", subtitle: "《愛是您·愛是我》& Cate Blanchett said something once that was very true. She said that the horizon was always shifting,but that it is a good thing. A good sensation of never having quite arrived.& Erm… the work is the important thing, not whether you’re a household name.", year: 2003, url: "https://wordswithalan.wordpress.com/2003/11/21/an-interview-with-alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20064, type: "link", title: "The Fun of Being Old Friends Playing Embattled Lovers (The New York Times)", subtitle: "紐約時報：艾倫與 Lindsay Duncan 談百老匯《Private Life》", year: 2002, url: "https://wordswithalan.wordpress.com/2002/05/30/the-fun-of-being-old-friends-playing-embattled-lovers/", tags: ["其他資料"], notes: [] },
+  { id: 20065, type: "link", title: "Rickman on Beckett (Beckett on Film, c. Mar 2002)", subtitle: "艾倫談Beckett：「演員永遠比不過戲劇本身」", year: 2002, url: "https://wordswithalan.wordpress.com/2002/03/01/rickman-on-beckett/", tags: ["其他資料"], notes: [] },
+  { id: 20066, type: "link", title: "Interview with Alan Rickman (Unreel Magazine, Oct/Dec 2001)", subtitle: "哈利波特", year: 2001, url: "https://wordswithalan.wordpress.com/2001/10/23/interview-with-alan-rickman/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 20067, type: "link", title: "HARDtalk (BBC News 24, 05 May 2001)", subtitle: "BBC HARDtalk 完整訪談逐字稿", year: 2001, url: "https://wordswithalan.wordpress.com/2001/05/05/hardtalk-05-may-2001/", tags: ["哈利波特:J.K.羅琳、小說與編劇"], notes: [] },
+  { id: 20068, type: "link", title: "Acting against expectations (The Irish Times)", subtitle: "愛爾蘭時報：艾倫談《大放異彩》 ", year: 2001, url: "https://wordswithalan.wordpress.com/2001/05/05/acting-against-expectations/", tags: ["其他資料"], notes: [] },
+  { id: 20069, type: "link", title: "Sometimes Europeans are Much Cooler than Americans (Cologne City Guide, 1999)", subtitle: "科隆城市指南雜誌：艾倫談《驚爆銀河系》與《怒犯天條》", year: 1999, url: "https://wordswithalan.wordpress.com/1999/12/31/sometimes-europeans-are-much-cooler-than-americans/", tags: ["其他資料"], notes: [] },
+  { id: 20070, type: "link", title: "An Encounter With Alan Rickman: Touching The Heart (Ecran Total, Mar 1998)", subtitle: "布魯塞爾國際影展：《冬天的訪客》首映", year: 1998, url: "https://wordswithalan.wordpress.com/1998/03/01/an-encounter-with-alan-rickman-touching-the-heart/", tags: ["其他資料"], notes: [] },
+  { id: 20071, type: "link", title: "A 'Winter' Tale (The Boston Globe, Jan 1998)", subtitle: "波士頓環球報：艾倫首部執導長片《冬天的訪客》", year: 1998, url: "https://wordswithalan.wordpress.com/1998/01/11/a-winter-tale/", tags: ["其他資料"], notes: [] },
+  { id: 20072, type: "link", title: "Angel With Horns (The Guardian, Jan 1998)", subtitle: "衛報深度報導《冬天的訪客》", year: 1998, url: "https://wordswithalan.wordpress.com/1998/01/03/angel-with-horns/", tags: ["其他資料"], notes: [] },
+  { id: 20073, type: "link", title: "Rickman's Baby (The Irish Times, Jan 1998)", subtitle: "愛爾蘭時報：艾倫談皇家藝術學院與轉行成為演員的過程", year: 1998, url: "https://wordswithalan.wordpress.com/1998/01/03/rickmans-baby/", tags: ["其他資料"], notes: [] },
+  { id: 20074, type: "link", title: "Compatible Compatriots (Los Angeles Times, Dec 1997)", subtitle: "洛杉磯時報：艾倫分享和艾瑪·湯普遜合作《冬天的訪客》的經驗", year: 1997, url: "https://wordswithalan.wordpress.com/1997/12/22/compatible-compatriots/", tags: [], notes: [] },
+  { id: 20075, type: "link", title: "Rickman moves to director's chair with 'Winter Guest' (CNN/LAT Syndicate)", subtitle: "CNN/LAT 聯合報導：艾倫首度執導電影", year: 1997, url: "https://wordswithalan.wordpress.com/1997/12/17/rickman-moves-to-directors-chair-with-winter-guest/", tags: ["其他資料"], notes: [] },
+  { id: 20076, type: "link", title: "Special 'Guest' — Alan Rickman Invites Audiences Into His Winter Wonderland (BoxOffice)", subtitle: "《冬天的訪客》", year: 1997, url: "https://wordswithalan.wordpress.com/1997/12/01/special-guest/", tags: ["其他資料"], notes: [] },
+  { id: 20077, type: "link", title: "A Winter's Tale (W Magazine, Dec 1997)", subtitle: "W 雜誌：《冬天的訪客》", year: 1997, url: "https://wordswithalan.wordpress.com/1997/12/01/a-winters-tale/", tags: [], notes: [] },
+  { id: 20078, type: "link", title: "Chilly Scenes of Winter Guest (Mirabella, Nov-Dec 1997) — by Emma Thompson", subtitle: "艾瑪·湯普遜紀錄拍《冬天的訪客》的回憶", year: 1997, url: "https://wordswithalan.wordpress.com/1997/11/01/chilly-scenes-of-winter-guest/", tags: ["朋友回憶"], notes: [] },
+  { id: 20079, type: "link", title: "In a Winter Of Discontent (Newsday, Oct 1997)", subtitle: "新聞日報：《冬天的訪客》漢普頓國際影展與美國首映", year: 1997, url: "https://wordswithalan.wordpress.com/1997/10/15/in-a-winter-of-discontent/", tags: ["其他資料"], notes: [] },
+  { id: 20080, type: "link", title: "Act Hard (The Scotsman, Aug 1997) — BAFTA Scotland Lecture", subtitle: "《冬天的訪客》《豪情本色》", year: 1997, url: "https://wordswithalan.wordpress.com/1997/08/27/act-hard/", tags: ["其他資料"], notes: [] },
+  { id: 20081, type: "link", title: "Rickman's Sensibility – Eamon De Valera interview (Hartford Courant, Oct 1996)", subtitle: "《豪情本色》", year: 1996, url: "https://wordswithalan.wordpress.com/1996/10/13/rickmans-sensibility-the-actor-talks-about-his-new-film-role-as-legendary-irish-leader-eamon-de-valera/", tags: ["其他資料"], notes: [] },
+  { id: 20082, type: "link", title: "Playing The Chief – Michael Collins interview (Irish Voice, Oct 1996)", subtitle: "「反派」埃蒙德瓦萊拉的立場", year: 1996, url: "https://wordswithalan.wordpress.com/1996/10/08/playing-the-chief-alan-rickman-speaks-of-acting-the-dev-in-michael-collins/", tags: ["其他資料"], notes: [] },
+  { id: 20083, type: "link", title: "A Dynasty Sinks Into Dementia in 'Rasputin' (Chicago Tribune, Mar 1996)", subtitle: "芝加哥論壇報：《俄宮奸雄 Rasputin》HBO 電影報導", year: 1996, role: "", url: "https://wordswithalan.wordpress.com/1996/03/17/a-dynasty-sinks-into-dementia-in-rasputin/", tags: ["其他資料"], notes: [] },
+  { id: 20084, type: "link", title: "Truly, Madly, Secretly (Ms London, Feb 1996)", subtitle: "Ms London：艾倫宣布停止受訪後罕見亮相", year: 1996, url: "https://wordswithalan.wordpress.com/1996/02/19/truly-madly-secretly/", tags: ["其他資料"], notes: [] },
+  { id: 20085, type: "link", title: "Closing His Eyes to Fame (Premiere UK, May 1995)", subtitle: "Q:你最近有看過什麼讓你很喜歡的作品嗎？艾倫：嗯，我最近看的兩部作品剛好都是很好的例子《Theatre de Complicite》和《飲食男女》（李安）——這兩部作品敘事都非常漂亮，同時又帶著截然不同的氣韻，一個帶著濃厚的民族色彩，另一個則非常細膩，不過它們都非常、非常地貼近人性。我想，我們現在這個時代最有可能失去的，大概就是那些會提醒我們「自己是人」的東西吧。", year: 1995, url: "https://wordswithalan.wordpress.com/1995/05/01/closing-his-eyes-to-fame/", tags: ["其他資料"], notes: [] },
+  { id: 20086, type: "link", title: "Cold Smoulder (Harper's & Queen, Apr 1995)", subtitle: "《新愛情樂園》", year: 1995, url: "https://wordswithalan.wordpress.com/1995/04/02/cold-smoulder/", tags: ["其他資料"], notes: [] },
+  { id: 20087, type: "link", title: "A Light Supper With Alan? (Brag Magazine, Feb 1995)", subtitle: "", year: 1995, url: "https://wordswithalan.wordpress.com/1995/02/10/a-light-supper-with-alan/", tags: ["其他資料"], notes: [] },
+  { id: 20088, type: "link", title: "Talk About a Talent For Acting (Huddersfield Daily Examiner, Jan 1995)", subtitle: "赫德斯菲爾德日報：《冬天的訪客》舞台劇版Q&A", year: 1995, url: "https://wordswithalan.wordpress.com/1995/01/21/talk-about-a-talent-for-acting/", tags: ["其他資料"], notes: [] },
+  { id: 20089, type: "link", title: "Difficult, What Me? (The Observer, Jan 1995)", subtitle: "觀察家報：艾倫首次執導戲劇《冬天的訪客》舞台劇", year: 1995, url: "https://wordswithalan.wordpress.com/1995/01/15/difficult-what-me/", tags: ["其他資料"], notes: [] },
+  { id: 20090, type: "link", title: "Truly Rickman (unknown UK newspaper, Jan 1995)", subtitle: "", year: 1995, url: "https://wordswithalan.wordpress.com/1995/01/10/truly-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20091, type: "link", title: "Truly, Madly, Rickman (unknown UK, Jan 1995)", subtitle: "艾倫·瑞克曼首次擔任戲劇導演", year: 1995, url: "https://wordswithalan.wordpress.com/1995/01/01/truly-madly-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20092, type: "link", title: "Leading Questions (The Times Magazine, Mar 1994)", subtitle: "「演員到底是在替角色辯護，還是把自己投射到角色身上，這件事永遠都有人在討論。」《瘋狂遊戲》導演Roger Spottiswoode說，「但艾倫·瑞克曼敢演出角色不討喜的那一面。拍攝期間，他幾乎完全變成了那個角色，所以每次發生爭論時，都像Mesmer本人在說話——聰明絕頂、帶著耶穌會士般的詭辯氣質，既迷人，又充滿驕傲與自負。」", year: 1994, url: "https://wordswithalan.wordpress.com/1994/03/12/leading-questions/", tags: ["其他資料"], notes: [] },
+  { id: 20093, type: "link", title: "An Actor Short on Words, Long on Presence (Christian Science Monitor, Dec 1993)", subtitle: "", year: 1993, url: "https://wordswithalan.wordpress.com/1993/12/14/an-actor-short-on-words-long-on-presence/", tags: ["其他資料"], notes: [] },
+  { id: 20094, type: "link", title: "Rickman and the Female Orgasm (Evening Standard, Oct 1993)", subtitle: "倫敦標準晚報：《瘋狂遊戲》Q&A", year: 1993, url: "https://wordswithalan.wordpress.com/1993/10/22/rickman-and-the-female-orgasm/", tags: ["其他資料"], notes: [] },
+  { id: 20095, type: "link", title: "The Leading Man (British GQ, July 1992)", subtitle: "英國 GQ 七月號 封面人物專訪", year: 1992, url: "https://wordswithalan.wordpress.com/1992/07/01/the-leading-man/", tags: ["其他資料"], notes: [] },
+  { id: 20096, type: "link", title: "Evil Elegance: Leading Men Pale Beside Alan Rickman's Seductive Villains (Lear's Magazine, 1992)", subtitle: "Lear's 雜誌：《終極警探》", year: 1992, url: "https://wordswithalan.wordpress.com/1992/07/01/evil-elegance-leading-men-pale-beside-alan-rickmans-seductive-villains/", tags: ["其他資料"], notes: [] },
+  { id: 20097, type: "link", title: "Mellow Drama (Big Issue, May 1992)", subtitle: "Ruby Wax：He has two extremes – total humility and total ego.", year: 1992, url: "https://wordswithalan.wordpress.com/1992/05/01/mellow-drama/", tags: ["其他資料"], notes: [] },
+  { id: 20098, type: "link", title: "Truly, Madly, Weepily (Radio Times, Feb 1992)", subtitle: "《人鬼未了情》", year: 1992, url: "https://wordswithalan.wordpress.com/1992/02/29/truly-madly-weepily/", tags: ["其他資料"], notes: [] },
+  { id: 20099, type: "link", title: "Rickman's Worth (Elle, Feb 1992)", subtitle: "Elle 雜誌專訪", year: 1992, url: "https://wordswithalan.wordpress.com/1992/02/01/rickmans-worth-2/", tags: ["其他資料"], notes: [] },
+  { id: 20100, type: "link", title: "Rickman the Warm-Hearted (USA Today, Dec 1991)", subtitle: "《閉上我的眼睛》& His long-time love – Rima Horton, a teacher and politician. They're not married: 'I think every relationship should be allowed to have its own rules.' Secret to staying together?'She's tolerant,' he says slowly thinking. 'She's incredibly tolerant. Unbelievably tolerant. Possibly a candidate for sainthood.'What requires such tolerance? 'I'm an actor.'", year: 1991, url: "https://wordswithalan.wordpress.com/1991/12/24/rickman-the-warm-hearted/", tags: ["其他資料"], notes: [] },
+  { id: 20101, type: "link", title: "Alan Rickman (Venice Magazine, Dec 1991)", subtitle: "《閉上我的眼睛》《天生贏家》", year: 1991, url: "https://wordswithalan.wordpress.com/1991/12/01/alan-rickman-2/", tags: ["其他資料"], notes: [] },
+  { id: 20102, type: "link", title: "Breaking the Acting Mold (Los Angeles Daily News, Nov 1991)", subtitle: "《耀武揚威》& Acting is mostly about listening,If you just focus in on what the other person is saying, acting takes care of itself to quite a large extent.", year: 1991, url: "https://wordswithalan.wordpress.com/1991/11/26/breaking-the-acting-mold/", tags: ["其他資料"], notes: [] },
+  { id: 20103, type: "link", title: "Truly, Madly, Deeply Villainous (Boston Globe Magazine, Nov 1991)", subtitle: "《俠盜王子羅賓漢》I think the point is that you should never judge them (he says of his characters).You can not be afraid to reveal the awful sides of them, or your own vulnerabilities. It is not up to you to say whether that is likeable or not.", year: 1991, url: "https://wordswithalan.wordpress.com/1991/11/01/truly-madly-deeply-villainous/", tags: ["其他資料"], notes: [] },
+  { id: 20104, type: "link", title: "Rickman's Worth (GQ, Sept 1991)", subtitle: "《Les Liaisons dangereuses》《終極警探》", year: 1991, url: "https://wordswithalan.wordpress.com/1991/09/01/rickmans-worth/", tags: ["其他資料"], notes: [] },
+  { id: 20105, type: "link", title: "Villain With a Voice of Honey (Daily Telegraph, Sept 1991)", subtitle: "《The Lucky Chance》", year: 1991, url: "https://wordswithalan.wordpress.com/1991/09/01/villain-with-a-voice-of-honey/", tags: ["其他資料"], notes: [] },
+  { id: 20106, type: "link", title: "Revival Meetings (Time Out, Aug 14-21, 1991)", subtitle: "《Les Liaisons dangereuses》", year: 1991, url: "https://wordswithalan.wordpress.com/1991/08/14/revival-meetings/", tags: ["其他資料"], notes: [] },
+  { id: 20107, type: "link", title: "Tough Actor to Follow (Entertainment Weekly, Aug 1991)", subtitle: "《冬末探戈》& I do feel more myself in America. I can regress there, and they have roller-coaster parks. My idea of a real treat is Magic Mountain without standing in line.", year: 1991, url: "https://wordswithalan.wordpress.com/1991/08/09/tough-actor-to-follow/", tags: ["其他資料"], notes: [] },
+  { id: 20108, type: "link", title: "Japanese Dream Ticket (The Times, Aug 1991)", subtitle: "《冬末探戈》", year: 1991, url: "https://wordswithalan.wordpress.com/1991/08/04/japanese-dream-ticket/", tags: ["其他資料"], notes: [] },
+  { id: 20109, type: "link", title: "Alan Rickman (unknown UK magazine, Aug 1991)", subtitle: "《閉上我的眼睛》With Close My Eyes, I had worked with Stephen Poliakoff in the theatre before, and he wrote the part of Sinciair for me, he says.", year: 1991, url: "https://wordswithalan.wordpress.com/1991/08/01/alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20110, type: "link", title: "Profile: Alan Rickman (European Travel and Life, Aug 1991)", subtitle: "《俠盜王子羅賓漢》", year: 1991, url: "https://wordswithalan.wordpress.com/1991/08/01/profile-alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20111, type: "link", title: "I'm a Nice Guy, I Don't Know Why the World Loves to Hate Me (Daily Mail, Aug 1991)", subtitle: "《俠盜王子羅賓漢》", year: 1991, url: "https://wordswithalan.wordpress.com/1991/08/01/im-a-nice-guy-i-dont-know-why-the-world-loves-to-hate-me/", tags: ["其他資料"], notes: [] },
+  { id: 20112, type: "link", title: "'Robin Hood' Villain in Danger of Being Cast in Bad-Guy Roles (Fort Worth Star-Telegram)", subtitle: "《俠盜王子羅賓漢》", year: 1991, url: "https://wordswithalan.wordpress.com/1991/06/20/robin-hood-villain-in-danger-of-being-cast-in-bad-guy-roles/", tags: ["其他資料"], notes: [] },
+  { id: 20113, type: "link", title: "Alan Rickman: Why Is This Suave, Mellifluous Englishman Always the Bad Guy? (Mirabella, Jun 1991)", subtitle: "Mirabella 雜誌", year: 1991, url: "https://wordswithalan.wordpress.com/1991/06/01/alan-rickman-why-is-this-suave-mellifluous-englishman-always-the-bad-guy/", tags: ["其他資料"], notes: [] },
+  { id: 20114, type: "link", title: "Robin Hood: Prince of Thieves – The Official Movie Book (excerpt)", subtitle: "《俠盜王子羅賓漢》官方電影書摘錄", year: 1991, url: "https://wordswithalan.wordpress.com/1991/06/01/robin-hood-prince-of-thieves-the-official-movie-book-excerpt/", tags: ["書籍&雜誌"], notes: [] },
+  { id: 20115, type: "link", title: "Much More than a Villain With His Hawkish Face (Philadelphia Inquirer, May 1991)", subtitle: "《人鬼未了情》But ask him and he will tell you he has played as many sweeties as sleazies. He’ll tell you about his good-guy roles in small films, far removed from the blockbusters.", year: 1991, url: "https://wordswithalan.wordpress.com/1991/05/26/much-more-than-a-villain-with-his-hawkish-face-and-imperious-voice-alan-rickman-is-hollywoods-big-bad-guy-die-hard-robin-hood/", tags: ["其他資料"], notes: [] },
+  { id: 20116, type: "link", title: "Jaques in As You Like It (Players of Shakespeare 2, 1989)", subtitle: "《莎士比亞詮釋者》第二冊：艾倫談Jaques (RSC 1985)", year: 1989, url: "https://wordswithalan.wordpress.com/1989/10/12/jaques-in-as-you-like-it/", tags: ["其他資料", "書籍&雜誌"], notes: [] },
+  { id: 20117, type: "link", title: "Eye on Alan Rickman a Blockbuster Villain (Newsday, Jul 1988)", subtitle: "新聞日報：艾倫在洛杉磯拍《終極警探》期間學會開車", year: 1988, url: "https://wordswithalan.wordpress.com/1988/07/27/eye-on-alan-rickman-a-blockbuster-villain/", tags: ["其他資料"], notes: [] },
+  { id: 20118, type: "link", title: "Hollywood Freeway (Los Angeles Daily News, Jul 1988)", subtitle: "LA 每日新聞：艾倫批評柴契爾英國壓制藝術", year: 1988, url: "https://wordswithalan.wordpress.com/1988/07/22/hollywood-freeway/", tags: ["其他資料"], notes: [] },
+  { id: 20119, type: "link", title: "Quick-Change Artist (Elle, Jul 1988)", subtitle: "Elle 雜誌：艾倫在拍《終極警探》的第一場戲時撕裂半月板", year: 1988, url: "https://wordswithalan.wordpress.com/1988/07/01/quick-change-artist/", tags: ["其他資料"], notes: [] },
+  { id: 20120, type: "link", title: "Tony-Bound Scorpions (New York Post, Jun 1987)", subtitle: "紐約郵報：艾倫與 Lindsay Duncan 角逐東尼獎", year: 1987, url: "https://wordswithalan.wordpress.com/1987/06/03/tony-bound-scorpions/", tags: ["其他資料"], notes: [] },
+  { id: 20121, type: "link", title: "Charming 'Monsters' of 'Liaisons' (The New York Times, May 1987)", subtitle: "紐約時報：艾倫與 Lindsay Duncan 在《危險關係》百老匯版本", year: 1987, url: "https://wordswithalan.wordpress.com/1987/05/07/charming-monsters-of-liaisons/", tags: ["其他資料"], notes: [] },
+  { id: 20122, type: "link", title: "The Devil in Mr. Rickman (Time Out, Apr 1986)", subtitle: "Time Out：艾倫談在皇家莎士比亞劇團《梅菲斯特》中的霍夫根", year: 1986, url: "https://wordswithalan.wordpress.com/1986/04/02/the-devil-in-mr-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20123, type: "link", title: "Into the Underworld (The Guardian, Apr 1986)", subtitle: "Mephisto", year: 1986, url: "https://wordswithalan.wordpress.com/1986/04/02/into-the-underworld/", tags: ["其他資料"], notes: [] },
+  { id: 20124, type: "link", title: "'Don't Fence Me In' Says Alan Rickman (RSC News, Spring 1986)", subtitle: "RSC 通訊：艾倫談 Jaques、Achilles 與 Valmont ", year: 1986, url: "https://wordswithalan.wordpress.com/1986/01/01/dont-fence-me-in-says-alan-rickman/", tags: ["其他資料"], notes: [] },
+  { id: 20125, type: "link", title: "Slippery Slope (Radio Times, Oct 1984)", subtitle: "Radio Times：艾倫談《巴切斯特傳》中的 Obadiah Slope", year: 1984, url: "https://wordswithalan.wordpress.com/1984/10/18/slippery-slope/", tags: ["其他資料"], notes: [] },
+  { id: 20126, type: "link", title: "Waiting For the Renaissance of the Actor (Drama magazine, Sept 1984)", subtitle: "Drama 雜誌：艾倫與肯尼斯·布萊納 (Kenneth Branagh) 談導演中心與演員主導的劇場思維", year: 1984, url: "https://wordswithalan.wordpress.com/1984/09/01/waiting-for-the-renaissance-of-the-actor/", tags: ["其他資料"], notes: [] }
+];
+
+// ── Merge datasets ──
+const WW_DATA_FULL = WW_DATA.map(e => ({
+  ...e,
+  type: e.type || "link",
+  notes: e.notes || [],
+  subtitle: e.subtitle || "",
+  tags: [...(e.tags || []), "wordswithalan"]
+}));
+
+const ALL_DATA = [...HTML_DATA, ...WW_DATA_FULL];
+
+// ════════════════════════════════════════════════════════════════════════════
+// Awards & Works
+// ════════════════════════════════════════════════════════════════════════════
+
+const AWARDS_BY_WORK = {
+  "Die Hard": ["☐ AFI — 100 Years…100 Heroes & Villains (Ranked #46, 2003)"],
+  "Quigley Down Under": ["✓ London Film Critics' Circle — British Actor of the Year (Won, 1992)"],
+  "Robin Hood": ["✓ BAFTA — Best Actor in a Supporting Role (Won, 1992)", "✓ London Film Critics' Circle — British Actor of the Year (Won, 1992)", "✓ Evening Standard British Film Award — Best Actor (Won, 1992)", "☐ Saturn Award — Best Supporting Actor (Nom, 1992)", "☐ MTV Movie Award — Best Villain (Nom, 1992)", "☐ CFCA — Best Supporting Actor (Nom, 1992)"],
+  "Truly Madly Deeply": ["✓ Evening Standard British Film Award — Best Actor (Won, 1992)", "✓ London Film Critics' Circle — British Actor of the Year (Won, 1992)", "✓ Golden Space Needle Award — Best Actor (Won, 1991)", "☐ BAFTA — Best Actor in a Leading Role (Nom, 1992)"],
+  "Close My Eyes": ["✓ London Film Critics' Circle — British Actor of the Year (Won, 1992)", "✓ Evening Standard British Film Award — Best Actor (Won, 1992)"],
+  "Mesmer": ["✓ Montreal World Film Festival — Best Actor (Won, 1994)"],
+  "Sense and Sensibility": ["☐ BAFTA — Best Actor in a Supporting Role (Nom, 1996)", "☐ SAG Award — Outstanding Performance by a Cast (Nom, 1996)", "☐ Chlotrudis Award — Best Supporting Actor (Nom, 1996)"],
+  "Michael Collins": ["☐ BAFTA — Best Actor in a Supporting Role (Nom, 1997)"],
+  "Rasputin": ["✓ Primetime Emmy — Outstanding Lead Actor, Miniseries/Movie (Won, 1996)", "✓ Golden Globe — Best Actor, Miniseries/TV Film (Won, 1997)", "✓ SAG Award — Outstanding Male Actor, TV Movie/Miniseries (Won, 1997)", "✓ Satellite Award — Best Actor, Miniseries/TV Film (Won, 1997)"],
+  "The Winter Guest": ["✓ Venice Film Festival — OCIC Award (Won, 1997)", "✓ Venice Film Festival — Pasinetti Award (Won, 1997)", "✓ Venice Film Festival — CinemAvvenire Award (Won, 1997)", "✓ Chicago International Film Festival — Gold Hugo, Best Feature (Won, 1997)", "✓ Brussels International Independent Film Festival — Audience Award (Won, 1998)", "☐ Venice Film Festival — Golden Lion (Nom, 1997)", "☐ Chlotrudis Award — Best Director (Nom, 1998)", "☐ Czech Lion — Best Foreign Language Film (Nom, 1999)"],
+  "Dogma": ["☐ Satellite Award — Best Supporting Actor (Nom, 1999)"],
+  "Galaxy Quest": ["☐ Saturn Award — Best Supporting Actor (Nom, 2000)"],
+  "Harry Potter": ["✓ Scream Award — Best Ensemble (Won, 2009)", "☐ Saturn Award — Best Supporting Actor (Nom, 2002, 2008)", "☐ Phoenix Film Critics Society Award — Best Acting Ensemble (Nom, 2002)"],
+  "Love Actually": ["☐ Critics Choice Award — Best Acting Ensemble (Nom, 2004)", "☐ Phoenix Film Critics Society Award — Best Acting Ensemble (Nom, 2004)"],
+  "Sweeney Todd": ["☐ Critics Choice Award — Best Acting Ensemble (Nom, 2008)", "☐ Saturn Award — Best Supporting Actor (Nom, 2008)"],
+  "Something the Lord Made": ["☐ Primetime Emmy — Outstanding Lead Actor, Miniseries/Movie (Nom, 2004)", "☐ Satellite Award — Best Actor, Miniseries/TV Film (Nom, 2004)"],
+  "Harry Potter DH2": ["✓ San Diego Film Critics Society — Best Ensemble Performance (Won, 2011)", "✓ People's Choice Award — Favorite Ensemble Movie Cast (Won, 2012)", "✓ MTV Movie Award — Favorite HP Character Portrayal (Won, 2011)", "☐ Alliance of Women Film Journalists — Best Supporting Actor (Nom, 2011)", "☐ Washington DC Area Film Critics Association — Best Ensemble (Nom, 2011)", "☐ Saturn Award — Best Supporting Actor (Nom, 2012)", "☐ St. Louis Gateway Film Critics Association — Best Supporting Actor (Nom, 2011)", "☐ Scream Award — Best Supporting Actor / Ensemble (Nom, 2011)", "☐ BAFTA — Best Supporting Actor (Longlist, 2012)"],
+  "The Butler": ["☐ SAG Award — Outstanding Performance by a Cast (Nom, 2014)"],
+  "Seminar": ["☐ Drama League Award — Distinguished Performance (Nom, 2012)"],
+  "Audiobook": ["✓ Audie Award — Audiobook of the Year (Won, 2010)", "✓ Audie Award — Multi-Voiced Performance (Won, 2010)"],
+  "Les Liaisons Dangereuses": ["☐ Tony Award — Best Actor in a Play (Nom, 1987)", "☐ Drama Desk Award — Outstanding Actor in a Play (Nom, 1987)", "☐ Olivier Award — Best Actor (Nom, 1986)"],
+  "Private Lives": ["✓ Variety Club Award — Best Actor (Won, 2002)", "☐ Tony Award — Best Actor in a Play (Nom, 2002)", "☐ Drama Desk Award — Outstanding Actor in a Play (Nom, 2002)", "☐ Olivier Award — Best Actor (Nom, 2002)"],
+  "Bottle Shock": ["✓ Seattle International Film Festival — Best Actor (Won, 2008)"],
+  "Eye in the Sky": ["☐ Evening Standard British Film Award — Best Supporting Actor (Nom, 2017)"],
+  "My Name Is Rachel Corrie": ["✓ Theatregoers' Choice Award — Best Director (Won, 2006)", "✓ Theatregoers' Choice Award — Best New Play (Won, 2006)"],
+  "A Promise": ["✓ Beijing International Film Festival Tiantan Award — Best Supporting Actor (Won, 2014)"]
+};
+
+const WW_PERIODS = [
+  {
+    id: "pre1990", label: "1990 以前", years: "1974–1989",
+    works: [
+      { tag: "Romeo and Juliet 1974", label: "Romeo and Juliet", year: 1974, role: "Paris (Haymarket Theatre, Leicester・舞台)", type: "stage" },
+      { tag: "Babes in the Wood", label: "Babes in the Wood", year: 1974, role: "(RADA・舞台)", type: "stage" },
+      { tag: "Joseph", label: "Joseph and the Amazing Technicolor Dreamcoat", year: 1974, role: "(RADA・舞台)", type: "stage" },
+      { tag: "Guys and Dolls", label: "Guys and Dolls", year: 1974, role: "(RADA・舞台)", type: "stage" },
+      { tag: "Nijinsky", label: "Nijinsky", year: 1976, role: "Nijinsky (舞台)", type: "stage" },
+      { tag: "Carnation Gang", label: "The Carnation Gang", year: 1976, role: "Daniel (Crucible Theatre, Sheffield・舞台)", type: "stage" },
+      { tag: "When We Dead Awaken", label: "When We Dead Awaken", year: 1976, role: "Arnold Rubek (Crucible Theatre, Sheffield・舞台)", type: "stage" },
+      { tag: "Sherlock Holmes", label: "Sherlock Holmes", year: 1976, role: "Sherlock Holmes (Birmingham Rep・舞台)", type: "stage" },
+      { tag: "The Devil is an Ass", label: "The Devil is an Ass", year: 1977, role: "Wittipol (舞台)", type: "stage" },
+      { tag: "Romeo and Juliet", label: "Romeo and Juliet", year: 1978, role: "Tybalt (BBC TV)", type: "tv" },
+      { tag: "The Tempest", label: "The Tempest", year: 1978, role: "Ferdinand (RSC・舞台)", type: "stage" },
+      { tag: "Captain Swing", label: "Captain Swing", year: 1978, role: "Farquarson (舞台)", type: "stage" },
+      { tag: "Love's Labour's Lost", label: "Love's Labour's Lost", year: 1978, role: "Boyet (RSC・舞台)", type: "stage" },
+      { tag: "Antony and Cleopatra 1978", label: "Antony and Cleopatra", year: 1978, role: "Alexas / Thidias (RSC・舞台)", type: "stage" },
+      { tag: "A View from the Bridge", label: "A View from the Bridge", year: 1978, role: "(Court Drama Group・舞台)", type: "stage" },
+      { tag: "Shelley", label: "《Shelley》", year: 1980, role: "Clive (TV)", type: "tv" },
+      { tag: "Commitments", label: "Commitments", year: 1980, role: "(Bush Theatre・舞台)", type: "stage" },
+      { tag: "Therese Raquin", label: "《Thérèse Raquin》", year: 1981, role: "Vidal (BBC TV)", type: "tv" },
+      { tag: "The Seagull", label: "The Seagull", year: 1981, role: "Mr. Aston (舞台・Kilroy 愛爾蘭改編)", type: "stage" },
+      { tag: "The Last Elephant", label: "The Last Elephant", year: 1981, role: "(Bush Theatre・舞台)", type: "stage" },
+      { tag: "Smiley's People", label: "《史邁利的人馬》", year: 1982, role: "Mr. Brownlow (BBC TV)", type: "tv" },
+      { tag: "The Barchester Chronicles", label: "《巴切斯特傳》", year: 1982, role: "Obadiah Slope (BBC TV)", type: "tv" },
+      { tag: "Busted", label: "《Busted》", year: 1982, role: "Simon (TV 電影)", type: "tv" },
+      { tag: "Rope", label: "Rope", year: 1983, role: "Rupert Cadell (BBC Radio 4)", type: "voice" },
+      { tag: "Bad Language", label: "Bad Language", year: 1983, role: "Bob (Hampstead・舞台)", type: "stage" },
+      { tag: "The Grass Widow", label: "The Grass Widow", year: 1983, role: "Dennis (Royal Court・舞台)", type: "stage" },
+      { tag: "The Way of the World", label: "The Way of the World", year: 1984, role: "Foigard (舞台)", type: "stage" },
+      { tag: "Lucky Chance", label: "The Lucky Chance", year: 1984, role: "Belmour (Royal Court・舞台)", type: "stage" },
+      { tag: "As You Like It", label: "As You Like It", year: 1985, role: "Jaques (RSC・舞台)", type: "stage" },
+      { tag: "Troilus and Cressida", label: "Troilus and Cressida", year: 1985, role: "Achilles (RSC・舞台)", type: "stage" },
+      { tag: "Les Liaisons Dangereuses", label: "Les Liaisons Dangereuses", year: 1985, role: "Vicomte de Valmont (RSC→West End→Broadway)", type: "stage", awards: AWARDS_BY_WORK["Les Liaisons Dangereuses"] },
+      { tag: "Pity in History", label: "《Pity in History》", year: 1985, role: "Croop (BBC TV)", type: "tv" },
+      { tag: "Girls on Top", label: "《Girls on Top》", year: 1985, role: "Dmitri (ITV)", type: "tv" },
+      { tag: "Mephisto", label: "Mephisto", year: 1986, role: "Hendrik Höfgen (RSC・舞台)", type: "stage" },
+      { tag: "Die Hard", label: "《終極警探》", year: 1988, role: "Hans Gruber", type: "film", awards: AWARDS_BY_WORK["Die Hard"] },
+      { tag: "Revolutionary Witness", label: "《Revolutionary Witness》", year: 1989, role: "Jacques Roux (BBC TV 短片)", type: "tv" },
+      { tag: "The January Man", label: "《耀武揚威》", year: 1989, role: "Ed", type: "film" },
+      { tag: "Spirit of Man", label: "ScreenPlay: The Spirit of Man", year: 1989, role: "Israel Yates (BBC TV 戲劇選集單集)", type: "tv" },
+      { tag: "A Little Like Drowning", label: "A Little Like Drowning", year: 1989, role: "Alfredo (BBC Radio 廣播劇・Anthony Minghella 編劇)", type: "voice" }
+    ]
+  },
+  {
+    id: "1990s", label: "1990s", years: "1990–1999",
+    works: [
+      { tag: "Quigley Down Under", label: "《捍衛遊俠》", year: 1990, role: "Elliott Marston", type: "film", awards: AWARDS_BY_WORK["Quigley Down Under"] },
+      { tag: "Truly Madly Deeply", label: "《人鬼未了情》", year: 1991, role: "Jamie", type: "film", awards: AWARDS_BY_WORK["Truly Madly Deeply"] },
+      { tag: "Robin Hood", label: "《俠盜王子羅賓漢》", year: 1991, role: "Sheriff of Nottingham", type: "film", awards: AWARDS_BY_WORK["Robin Hood"] },
+      { tag: "Close My Eyes", label: "《閉上我的眼睛》", year: 1991, role: "Sinclair Bryant", type: "film", awards: AWARDS_BY_WORK["Close My Eyes"] },
+      { tag: "Closet Land", label: "《叛國作家》", year: 1991, role: "The Interrogator", type: "film" },
+      { tag: "Tango at the End of Winter", label: "Tango at the End of Winter", year: 1991, role: "Sei (蜷川幸雄執導・舞台)", type: "stage" },
+      { tag: "Bob Roberts", label: "《天生贏家》", year: 1992, role: "Lukas Hart III", type: "film" },
+      { tag: "Hamlet", label: "Hamlet", year: 1992, role: "Hamlet (Riverside Studios・舞台)", type: "stage" },
+      { tag: "Tubular Bells II", label: "Tubular Bells II", year: 1992, role: "報幕 (Mike Oldfield 音樂專輯)", type: "voice" },
+      { tag: "Fallen Angels", label: "《墮落天使》", year: 1993, role: "Dwight Billings (TV)", type: "tv" },
+      { tag: "Mesmer", label: "《瘋狂遊戲 Mesmer》", year: 1994, role: "Franz Mesmer", type: "film", awards: AWARDS_BY_WORK["Mesmer"] },
+      { tag: "An Awfully Big Adventure", label: "《新愛情樂園》", year: 1995, role: "P.L. O'Hara", type: "film" },
+      { tag: "Lumière and Company", label: "《Lumière and Company》", year: 1995, role: "本人 (John Boorman 導演段・電影誕生百年紀念)", type: "film" },
+      { tag: "Sense and Sensibility", label: "《理性與感性》", year: 1995, role: "布蘭登上校", type: "film", awards: AWARDS_BY_WORK["Sense and Sensibility"] },
+      { tag: "The Winter Guest Play", label: "The Winter Guest (舞台版)", year: 1995, role: "導演 (Almeida Theatre)", type: "directing" },
+      { tag: "Rasputin", label: "《俄宮奸雄 Rasputin》", year: 1996, role: "Grigori Rasputin (HBO TV)", type: "tv", awards: AWARDS_BY_WORK["Rasputin"] },
+      { tag: "Michael Collins", label: "《豪情本色》", year: 1996, role: "Éamon de Valera", type: "film", awards: AWARDS_BY_WORK["Michael Collins"] },
+      { tag: "The Winter Guest", label: "《冬天的訪客》", year: 1997, role: "導演 / 編劇", type: "directing", awards: AWARDS_BY_WORK["The Winter Guest"] },
+      { tag: "Space Bar", label: "The Space Bar", year: 1997, role: "My Parker / Ty Parker (PC 點擊冒險遊戲・配音)", type: "voice" },
+      { tag: "Antony and Cleopatra 1998", label: "Antony and Cleopatra", year: 1998, role: "Mark Antony (National Theatre・舞台)", type: "stage" },
+      { tag: "Judas Kiss", label: "《猶大之吻》", year: 1998, role: "David Friedman", type: "film" },
+      { tag: "Dark Harbor", label: "《惡夜謀殺》", year: 1998, role: "David Weinberg", type: "film" },
+      { tag: "Dogma", label: "《怒犯天條》", year: 1999, role: "Metatron", type: "film", awards: AWARDS_BY_WORK["Dogma"] },
+      { tag: "Galaxy Quest", label: "《驚爆銀河系》", year: 1999, role: "Alexander Dane", type: "film", awards: AWARDS_BY_WORK["Galaxy Quest"] },
+      { tag: "Refuse to Dance", label: "Charlie Dore - Refuse to Dance", year: 1999, role: "MV 演出", type: "performance" }
+    ]
+  },
+  {
+    id: "2000s", label: "2000s", years: "2000–2009",
+    works: [
+      { tag: "Victoria Wood", label: "《Victoria Wood with All the Trimmings》", year: 2000, role: "Capt. George Fallon (BBC One)", type: "tv" },
+      { tag: "Help Im a Fish", label: "《救命呀！我是一隻魚》", year: 2000, role: "Joe (配音)", type: "voice" },
+      { tag: "Texas In Demand", label: "Texas - In Demand", year: 2000, role: "艾倫與 Sharleen 舞蹈 (MV)", type: "performance" },
+      { tag: "Texas Start A Family", label: "Texas - Start A Family", year: 2000, role: "MV 演出", type: "performance" },
+      { tag: "When Love Speaks", label: "When Love Speaks", year: 2002, role: "Sonnet 130 朗讀 (CD)", type: "voice" },
+      { tag: "Blow Dry", label: "《大放異彩》", year: 2001, role: "Phil Allen", type: "film" },
+      { tag: "The Search for John Gissing", label: "《尋找 John Gissing》", year: 2001, role: "John Gissing", type: "film" },
+      { tag: "Play", label: "《Play》", year: 2001, role: "男人 (Beckett on Film 短片)", type: "short" },
+      { tag: "Amnesty 2001", label: "《We Know Where You Live. Live!》", year: 2001, role: "Four Yorkshiremen (Amnesty 40 週年・Wembley)", type: "performance" },
+      { tag: "Harry Potter", label: "《哈利波特》系列", year: 2001, role: "Severus Snape", type: "film", awards: AWARDS_BY_WORK["Harry Potter"] },
+      { tag: "Private Lives", label: "Private Lives", year: 2002, role: "Elyot Chase (West End→Broadway)", type: "stage", awards: AWARDS_BY_WORK["Private Lives"] },
+      { tag: "King of the Hill", label: "King of the Hill", year: 2002, role: "King Philip (配音・Fox)", type: "voice" },
+      { tag: "Love Actually", label: "《愛是您·愛是我》", year: 2003, role: "Harry", type: "film", awards: AWARDS_BY_WORK["Love Actually"] },
+      { tag: "Something the Lord Made", label: "《天賜良醫》", year: 2004, role: "Alfred Blalock (HBO TV)", type: "tv", awards: AWARDS_BY_WORK["Something the Lord Made"] },
+      { tag: "Hitchhiker's Guide", label: "《星際大奇航》", year: 2005, role: "Marvin (配音)", type: "voice" },
+      { tag: "My Name Is Rachel Corrie", label: "My Name Is Rachel Corrie", year: 2005, role: "導演 / 聯合編劇 (Royal Court)", type: "directing", awards: AWARDS_BY_WORK["My Name Is Rachel Corrie"] },
+      { tag: "Snow Cake", label: "《雪季過客》", year: 2006, role: "Alex Hughes", type: "film" },
+      { tag: "Perfume", label: "《香水》", year: 2006, role: "Antoine Richis", type: "film" },
+      { tag: "Sweeney Todd", label: "《瘋狂理髮師》", year: 2007, role: "Judge Turpin", type: "film", awards: AWARDS_BY_WORK["Sweeney Todd"] },
+      { tag: "Nobel Son", label: "《諾貝爾獎得主的兒子》", year: 2007, role: "Eli Michaelson", type: "film" },
+      { tag: "Bottle Shock", label: "《戀戀酒鄉》", year: 2008, role: "Steven Spurrier", type: "film", awards: AWARDS_BY_WORK["Bottle Shock"] },
+      { tag: "Creditors", label: "Creditors", year: 2008, role: "導演 (Donmar Warehouse)", type: "directing" },
+      { tag: "Return of the Native", label: "《Return of the Native》", year: 2008, role: "朗讀 (Thomas Hardy 有聲書)", type: "voice" }
+    ]
+  },
+  {
+    id: "2010s", label: "2010s", years: "2010–2016",
+    works: [
+      { tag: "Alice in Wonderland", label: "《魔境夢遊》", year: 2010, role: "智蟲 Absolem (配音)", type: "voice" },
+      { tag: "The Wildest Dream", label: "《最狂野的夢》", year: 2010, role: "Noel Odell (配音・紀錄片)", type: "voice" },
+      { tag: "Audiobook", label: "《曼德拉非洲寓言集》", year: 2010, role: "有聲書", type: "voice", awards: AWARDS_BY_WORK["Audiobook"] },
+      { tag: "Arena 2010", label: "《Arena》", year: 2010, role: "Various characters (BBC 紀錄片系列・1 集)", type: "tv" },
+      { tag: "The Song of Lunch", label: "《午餐之歌》", year: 2010, role: "He (BBC TV)", type: "tv" },
+      { tag: "John Gabriel Borkman", label: "John Gabriel Borkman", year: 2010, role: "John Gabriel Borkman (BAM→Abbey)", type: "stage" },
+      { tag: "Harry Potter DH2", label: "《哈利波特：死神的聖物Ⅱ》", year: 2011, role: "Severus Snape", type: "film", awards: AWARDS_BY_WORK["Harry Potter DH2"] },
+      { tag: "The Boy in the Bubble", label: "《泡泡男孩》", year: 2011, role: "旁白 (動畫短片)", type: "voice" },
+      { tag: "Portraits in Dramatic Time", label: "Portraits in Dramatic Time", year: 2011, role: "Self (視覺藝術短片)", type: "short" },
+      { tag: "Seminar", label: "Seminar", year: 2011, role: "Leonard (Broadway)", type: "stage", awards: AWARDS_BY_WORK["Seminar"] },
+      { tag: "Gambit", label: "《冤家偷很大》", year: 2012, role: "Lord Lionel Shahbandar", type: "film" },
+      { tag: "BAM150", label: "《BAM150》", year: 2012, role: "本人（紀錄片）", type: "film" },
+      { tag: "The Butler", label: "《白宮第一管家》", year: 2013, role: "Ronald Reagan", type: "film", awards: AWARDS_BY_WORK["The Butler"] },
+      { tag: "CBGB", label: "《龐克地下城》", year: 2013, role: "Hilly Kristal", type: "film" },
+      { tag: "Dust", label: "《Dust》", year: 2013, role: "Todd (短片)", type: "short" },
+      { tag: "A Promise", label: "《愛的承諾》", year: 2013, role: "Karl Hoffmeister", type: "film", awards: AWARDS_BY_WORK["A Promise"] },
+      { tag: "A Little Chaos", label: "《美人情園 A Little Chaos》", year: 2014, role: "路易十四 / 導演 / 編劇", type: "directing" },
+      { tag: "Eye in the Sky", label: "《天眼行動》", year: 2015, role: "Lt. Gen. Frank Benson", type: "film", awards: AWARDS_BY_WORK["Eye in the Sky"] },
+      { tag: "Alice 2", label: "《魔境夢遊:時光怪客》", year: 2016, role: "Absolem (配音・遺作)", type: "voice" },
+      { tag: "Alan documentary", label: "《Alan》紀錄片", year: 2016, role: "本人（2007 年訪喬治亞，2016 年發表・Giga Agladze 導演）", type: "tv" }
+    ]
+  }
+];
+
+const WORK_KEYWORDS = {
+  "Die Hard": ["die hard", "終極警探", "gruber"],
+  "Les Liaisons Dangereuses": ["liaisons", "valmont", "危險關係", "merteuil"],
+  "Robin Hood": ["robin hood", "sheriff", "nottingham", "俠盜王子", "羅賓漢"],
+  "Truly Madly Deeply": ["truly madly", "人鬼未了情"],
+  "Sense and Sensibility": ["sense and sensibility", "sense & sensibility", "brandon", "理性與感性", "dashwood"],
+  "The Barchester Chronicles": ["barchester", "slope", "巴切斯特"],
+  "Tango at the End of Winter": ["tango at the end", "冬末探戈", "ninagawa", "蜷川"],
+  "A Little Like Drowning": ["a little like drowning", "drowning", "alfredo", "minghella"],
+  "Romeo and Juliet 1974": ["haymarket leicester", "paris haymarket"],
+  "Carnation Gang": ["carnation gang"],
+  "When We Dead Awaken": ["when we dead awaken", "rubek"],
+  "Spirit of Man": ["spirit of man", "israel yates", "screenplay bbc"],
+  "Space Bar": ["space bar", "ty parker", "my parker", "boffo"],
+  "Hamlet": ["hamlet", "哈姆雷特"],
+  "Antony and Cleopatra 1978": ["antony and cleopatra", "cleopatra", "peter brook", "alan howard", "glenda jackson"],
+  "Antony and Cleopatra 1998": ["antony and cleopatra", "mark antony", "helen mirren", "national theatre", "olivier theatre"],
+  "Mesmer": ["mesmer", "瘋狂遊戲"],
+  "Lumière and Company": ["lumière and company", "lumiere and company", "boorman", "電影誕生", "百年"],
+  "Arena 2010": ["arena 2010", "arena bbc"],
+  "The Winter Guest": ["winter guest", "冬天的訪客", "sharman macdonald"],
+  "Rasputin": ["rasputin", "俄宮奸雄"],
+  "Michael Collins": ["michael collins", "de valera", "豪情本色", "valera"],
+  "Galaxy Quest": ["galaxy quest", "驚爆銀河系"],
+  "Gambit": ["gambit", "冤家偷很大"],
+  "Dogma": ["dogma", "怒犯天條", "metatron"],
+  "Harry Potter": ["harry potter", "snape", "石內卜", "哈利波特", "hogwarts", "severus", "potter"],
+  "Harry Potter DH2": ["deathly hallows", "死神的聖物"],
+  "Love Actually": ["love actually", "愛是您", "愛是我"],
+  "Something the Lord Made": ["something the lord", "blalock", "天賜良醫"],
+  "My Name Is Rachel Corrie": ["rachel corrie", "瑞秋·科里", "corrie"],
+  "Snow Cake": ["snow cake", "雪季過客", "wawa"],
+  "Perfume": ["perfume", "香水", "grenouille"],
+  "Sweeney Todd": ["sweeney todd", "turpin", "瘋狂理髮師", "sondheim"],
+  "Nobel Son": ["nobel son", "諾貝爾", "michaelson"],
+  "Bottle Shock": ["bottle shock", "戀戀酒鄉", "spurrier", "napa"],
+  "Creditors": ["creditors", "strindberg", "債主"],
+  "John Gabriel Borkman": ["borkman", "john gabriel", "博克曼"],
+  "Seminar": ["seminar", "研討會", "rebeck", "leonard"],
+  "A Little Chaos": ["little chaos", "美人情園", "versailles", "louis xiv"],
+  "CBGB": ["cbgb", "龐克地下城", "hilly kristal", "punk"],
+  "A Promise": ["a promise", "承諾", "hoffmeister"],
+  "The Butler": ["the butler", "白宮第一管家", "reagan"],
+  "Eye in the Sky": ["eye in the sky", "天眼行動", "benson"],
+  "Alan documentary": ["alan documentary", "giga agladze", "tbilisi", "robert sturua", "第比利斯", "喬治亞"],
+  "Private Lives": ["private lives", "私生活", "elyot", "coward", "lindsay duncan"],
+  "Quigley Down Under": ["quigley", "捍衛遊俠", "marston"],
+  "Mephisto": ["mephisto", "hofgen", "barbican"],
+  "As You Like It": ["as you like it", "jaques", "stratford"],
+  "Bob Roberts": ["bob roberts", "tim robbins", "天生贏家"],
+  "An Awfully Big Adventure": ["awfully big adventure", "新愛情樂園", "o'hara", "bainbridge"],
+  "Closet Land": ["closet land", "叛國作家", "interrogator"],
+  "Close My Eyes": ["close my eyes", "閉上我的眼睛", "sinclair", "poliakoff"],
+  "Audiobook": ["audiobook", "有聲書", "mandela", "非洲寓言"],
+  "Play": ["beckett on film", "beckett"],
+  "Texas In Demand": ["in demand", "texas - in demand"],
+  "Texas Start A Family": ["start a family"],
+  "Refuse to Dance": ["refuse to dance", "charlie dore"],
+  "Amnesty 2001": ["we know where you live", "four yorkshiremen", "amnesty international", "amnesty 40"]
+};
+
+const BOOK_SUBCATS = {
+  10127: "朋友回憶", 10128: "朋友回憶", 10129: "日記", 10130: "舞台",
+  10131: "朋友回憶", 10132: "朋友回憶", 10133: "朋友回憶", 10134: "朋友回憶",
+  10135: "繁體書", 10136: "雜誌",     10137: "雜誌",     10138: "雜誌",
+  10139: "舞台",     10140: "舞台",     10141: "攝影集",     10142: "繁體書",
+  10143: "電影書",   10144: "舞台",     10145: "朋友回憶", 10146: "攝影集",
+  10147: "電影書",   10148: "電影書",   10149: "電影書",   10150: "電影書",
+  10151: "電影書",   10152: "電影書",   10153: "電影書",   10154: "電影書",
+  10156: "電影書",   10157: "雜誌",     10158: "雜誌",     20114: "電影書",
+  10168: "電影書",   10169: "電影書",   10170: "繁體書",   10171: "繁體書",
+  20116: "舞台"
+};
+
+const BOOK_SUBCAT_ORDER = ["雜誌", "朋友回憶", "舞台", "電影書", "攝影集", "繁體書", "日記"];
+
+const TAG_CATEGORIES = [
+  "圖片庫", "艾倫拍哈利波特的幕後小故事", "哈利波特:J.K.羅琳、小說與編劇", "哈利波特:爛導演大衛葉慈",
+  "哈利波特:劇本與刪減片段整理", "哈利波特:合約爭議", "朋友回憶", "我的名字是瑞秋·科里",
+  "支持西藏獨立", "李安Taiwan&Taiwanese", "MV", "劇本/物品", "有聲書", "書籍&雜誌", "其他資料"
+];
+
+const SEARCH_ALIASES = [
+  ["rca", "royal college of art"],
+  ["rada", "royal academy of dramatic art"],
+  ["rsc", "royal shakespeare company", "royal shakespeare"],
+  ["bbc", "british broadcasting"],
+  ["npr", "national public radio"],
+  ["hbo", "home box office"],
+  ["ew", "entertainment weekly"],
+  ["nyt", "new york times"],
+  ["la times", "los angeles times", "洛杉磯時報"],
+  ["bafta", "british academy"],
+  ["艾瑪", "emma thompson", "艾瑪·湯普森", "湯普森"],
+  ["雪歌妮", "sigourney weaver", "sigourney", "雪歌妮·薇佛"],
+  ["麥可·肯門", "michael kamen", "kamen"],
+  ["艾倫", "alan rickman", "rickman"],
+  ["蜷川", "ninagawa", "蜷川幸雄"],
+  ["李安", "ang lee"]
+];
+
+const PERIOD_ERA_LABELS = [
+  { id: "all", label: "全部", color: "#1a1a1a" },
+  { id: "pre1990", label: "1990 以前", color: "#5C6E5A" },
+  { id: "1990s", label: "1990s", color: "#0369A1" },
+  { id: "2000s", label: "2000s", color: "#047857" },
+  { id: "2010s", label: "2010s", color: "#B45309" }
+];
+
+// ── Helpers ──
+function sanitizeUrl(url) {
+  if (!url) return "";
+  let u = url.trim();
+  if (!u.startsWith("http")) u = "https://" + u;
+  try {
+    const p = new URL(u);
+    if (!["https:", "http:"].includes(p.protocol)) return "";
+    if (YT_HOSTS.includes(p.hostname)) {
+      let vid = p.searchParams.get("v");
+      if (!vid && p.hostname === "youtu.be") vid = p.pathname.slice(1);
+      if (vid) return "https://www.youtube.com/watch?v=" + vid;
+    }
+    return p.origin + p.pathname + (p.search || "");
+  } catch { return ""; }
+}
+
+function getYouTubeId(url) {
+  try {
+    const p = new URL(url);
+    if (p.hostname === "youtu.be") return p.pathname.slice(1);
+    return p.searchParams.get("v") || null;
+  } catch { return null; }
+}
+
+function buildTrigrams(str) {
+  const s = str.toLowerCase().replace(/\s+/g, "");
+  if (!s) return new Set();
+  if (s.length < 3) return new Set(s.split(""));
+  const t = new Set();
+  for (let i = 0; i <= s.length - 3; i++) t.add(s.slice(i, i + 3));
+  return t;
+}
+
+function trigramJaccard(a, b) {
+  const ta = buildTrigrams(a), tb = buildTrigrams(b);
+  if (!ta.size || !tb.size) return 0;
+  let inter = 0;
+  for (const t of ta) if (tb.has(t)) inter++;
+  return inter / (ta.size + tb.size - inter);
+}
+
+function isSubseq(q, text) {
+  let qi = 0;
+  for (let i = 0; i < text.length && qi < q.length; i++) if (text[i] === q[qi]) qi++;
+  return qi === q.length;
+}
+
+function fuzzyField(q, text, exactW, fuzzyW) {
+  if (!text) return 0;
+  const t = text.toLowerCase();
+  if (t.includes(q)) return exactW;
+  const jac = trigramJaccard(q, t);
+  if (jac > 0.25) return fuzzyW * jac;
+  if (q.length >= 2 && isSubseq(q, t)) return fuzzyW * 0.4;
+  return 0;
+}
+
+function matchWorkKeywords(work, item) {
+  const hay = [item.title, item.subtitle || "", ...(item.tags || [])].join(" ").toLowerCase();
+  const keys = WORK_KEYWORDS[work.tag] || [work.tag.toLowerCase()];
+  return keys.some(k => {
+    const kLower = k.toLowerCase();
+    if (/[^\x00-\x7f]/.test(kLower)) {
+      return hay.includes(kLower);
+    }
+    const escaped = kLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp("\\b" + escaped + "\\b", "i");
+    return regex.test(hay);
+  });
+}
+
+const BATCH = 40;
+const TYPE_ICON = { film: "🎬", tv: "📺", stage: "🎭", directing: "🎥", voice: "🎙", performance: "✨", short: "📽" };
+
+const C = {
+  pageBg:    "#FAF8F3",
+  blockBg:   "#F1ECE4",
+  sidebarBg: "#FFFFFF",
+  bodyText:  "#2B2B2B",
+  mutedText: "#6B6B6B",
+  primary:   "#3F4E5A",
+  accent:    "#C7A77A",
+  border:    "#E2DED7",
+  white:     "#FFFFFF"
+};
+
+const TAG_ICONS = {
+  "圖片庫": "🖼",
+  "艾倫拍哈利波特的幕後小故事": "🎬",
+  "哈利波特:J.K.羅琳、小說與編劇": "📖",
+  "哈利波特:爛導演大衛葉慈": "🎥",
+  "哈利波特:劇本與刪減片段整理": "✂️",
+  "哈利波特:合約爭議": "⚖️",
+  "朋友回憶": "👥",
+  "我的名字是瑞秋·科里": "🌿",
+  "支持西藏獨立": "🏔",
+  "李安Taiwan&Taiwanese": "🇹🇼",
+  "MV": "🎵",
+  "劇本/物品": "📜",
+  "有聲書": "🎧",
+  "書籍&雜誌": "📚",
+  "其他資料": "🎞"
+};
+
+// ── Components ──
+function YTThumb({ url }) {
+  const vid = getYouTubeId(url);
+  if (!vid) return null;
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" style={{ display: "block", borderRadius: 6, overflow: "hidden", position: "relative", marginBottom: 8 }}>
+      <img src={"https://img.youtube.com/vi/" + vid + "/mqdefault.jpg"} alt="YouTube" style={{ width: "100%", display: "block", borderRadius: 6, border: "1px solid " + C.border }} />
+      <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", background: "rgba(0,0,0,0.72)", borderRadius: "50%", width: 46, height: 46, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, color: "#fff" }}>▶</span>
+    </a>
+  );
+}
+
+function ArchiveCard({ item }) {
+  const clean = sanitizeUrl(item.url);
+  const type = item.type || "link";
+  const isWW = (item.tags || []).includes("wordswithalan");
+  const visibleTags = (item.tags || []).filter(t => t !== "wordswithalan");
+
+  return (
+    <div style={{
+      background: C.white,
+      border: "1px solid " + C.border,
+      borderLeft: isWW ? "3px solid " + C.accent : "1px solid " + C.border,
+      borderRadius: 8,
+      padding: "18px 20px 14px",
+      display: "flex", flexDirection: "column", gap: 0
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+        {item.year && (
+          <span style={{ fontSize: 11, color: C.mutedText, fontFamily: "monospace", letterSpacing: "0.03em" }}>{item.year}</span>
+        )}
+        {type === "audio" && <span style={{ fontSize: 10, color: C.primary, background: C.blockBg, borderRadius: 3, padding: "1px 6px", fontWeight: 600 }}>🎵 音檔</span>}
+        {type === "youtube" && <span style={{ fontSize: 10, color: "#b91c1c", background: "#fef2f2", borderRadius: 3, padding: "1px 6px", fontWeight: 600 }}>▶ YouTube</span>}
+        {isWW && <span style={{ fontSize: 10, color: C.accent, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>wordswithalan</span>}
+      </div>
+
+      <div style={{
+        fontSize: 17, fontWeight: 800, color: C.bodyText, lineHeight: 1.45,
+        fontFamily: "'Noto Serif TC', 'Georgia', serif",
+        marginBottom: item.subtitle ? 5 : 10
+      }}>{item.title}</div>
+
+      {item.subtitle && (
+        <div style={{ fontSize: 12.5, color: C.mutedText, lineHeight: 1.6, marginBottom: 10 }}>{item.subtitle}</div>
+      )}
+
+      {type === "youtube" && <YTThumb url={clean} />}
+
+      {visibleTags.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
+          {visibleTags.map(t => (
+            <span key={t} style={{
+              fontSize: 11, padding: "3px 9px", borderRadius: 4,
+              background: C.blockBg, color: C.primary, fontWeight: 600,
+              border: "1px solid " + C.border, letterSpacing: "0.01em"
+            }}>{t}</span>
+          ))}
+        </div>
+      )}
+
+      <div style={{ borderTop: "1px solid " + C.border, paddingTop: 9, marginTop: "auto" }}>
+        <a href={clean} target="_blank" rel="noopener noreferrer" style={{
+          fontSize: 11, color: C.primary, opacity: 0.75,
+          wordBreak: "break-all", textDecoration: "none",
+          display: "flex", alignItems: "flex-start", gap: 4
+        }}>
+          <span style={{ flexShrink: 0, marginTop: 1 }}>↗</span>
+          <span style={{ wordBreak: "break-all" }}>{clean}</span>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function AwardsPanel({ awards }) {
+  if (!awards || !awards.length) return null;
+  const won = awards.filter(a => a.startsWith("✓"));
+  const nom = awards.filter(a => a.startsWith("☐"));
+  return (
+    <div style={{ background: "#fdf8ef", border: "1px solid " + C.accent + "40", borderLeft: "3px solid " + C.accent, borderRadius: 8, padding: "14px 18px", marginBottom: 18 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>獎項記錄</div>
+      {won.map((a, i) => <div key={i} style={{ fontSize: 13, color: "#4a7c5f", marginBottom: 5, lineHeight: 1.55 }}>{a}</div>)}
+      {nom.map((a, i) => <div key={i} style={{ fontSize: 12.5, color: C.mutedText, marginBottom: 3, lineHeight: 1.55 }}>{a}</div>)}
+    </div>
+  );
+}
+
+// ── Main App ──
+function App() {
+  const [items] = useState(ALL_DATA);
+  const [sidebarView, setSidebarView] = useState("tag");
+  const [selectedTag, setSelectedTag] = useState(null);
+  const [selectedEra, setSelectedEra] = useState("all");
+  const [selectedWork, setSelectedWork] = useState(null);
+  const [searchQ, setSearchQ] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [displayCount, setDisplayCount] = useState(BATCH);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [bookSubcat, setBookSubcat] = useState(null);
+  const sentinelRef = useRef(null);
+
+  const erasWorks = useMemo(() => {
+    if (selectedEra === "all") return WW_PERIODS.flatMap(p => p.works);
+    const period = WW_PERIODS.find(p => p.id === selectedEra);
+    return period ? period.works : [];
+  }, [selectedEra]);
+
+  const displayed = useMemo(() => {
+    if (searchQ.trim()) {
+      const q = searchQ.trim().toLowerCase();
+      const expandedTerms = new Set([q]);
+      if (q.length >= 2) {
+        const allGroups = [...Object.values(WORK_KEYWORDS), ...SEARCH_ALIASES];
+        for (const group of allGroups) {
+          const hit = group.some(k => {
+            const kLower = k.toLowerCase();
+            return kLower === q || kLower.includes(q) || (k.length >= 3 && q.includes(kLower));
+          });
+          if (hit) group.forEach(k => expandedTerms.add(k.toLowerCase()));
+        }
+      }
+      return items
+        .map(i => {
+          const title = i.title.toLowerCase();
+          const subtitle = (i.subtitle || "").toLowerCase();
+          const tags = (i.tags || []).join(" ").toLowerCase();
+          const url = (i.url || "").toLowerCase();
+          let score = 0;
+          if (title.includes(q)) score += 20;
+          if (subtitle.includes(q)) score += 12;
+          if (tags.includes(q)) score += 8;
+          if (url.includes(q)) score += 4;
+          for (const term of expandedTerms) {
+            if (term === q) continue;
+            if (title.includes(term)) score += 10;
+            if (subtitle.includes(term)) score += 6;
+            if (tags.includes(term)) score += 4;
+          }
+          if (score === 0) {
+            score += fuzzyField(q, title, 10, 5);
+            score += fuzzyField(q, subtitle, 8, 4);
+            score += fuzzyField(q, tags, 5, 3);
+          }
+          return { item: i, score };
+        })
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(({ item }) => item);
+    }
+
+    let base = [...items];
+    if (sidebarView === "tag" && selectedTag) {
+      base = base.filter(i => (i.tags || []).includes(selectedTag));
+      if (selectedTag === "其他資料" || selectedTag === "朋友回憶") {
+        base = base.filter(i => !(i.tags || []).includes("wordswithalan"));
+      }
+      if (selectedTag === "書籍&雜誌" && bookSubcat) {
+        base = base.filter(i => BOOK_SUBCATS[i.id] === bookSubcat);
+      }
+    } else if (sidebarView === "work" && selectedWork) {
+      base = base.filter(i => matchWorkKeywords(selectedWork, i));
+    } else if (sidebarView === "work" && selectedEra !== "all") {
+      const works = WW_PERIODS.find(p => p.id === selectedEra)?.works || [];
+      base = base.filter(i => works.some(w => matchWorkKeywords(w, i)));
+    }
+    return base;
+  }, [items, sidebarView, selectedTag, selectedWork, selectedEra, searchQ, bookSubcat]);
+
+  useEffect(() => { setDisplayCount(BATCH); }, [sidebarView, selectedTag, selectedWork, selectedEra, searchQ, bookSubcat]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) setDisplayCount(c => Math.min(c + BATCH, displayed.length));
+    }, { threshold: 0.1 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [displayed.length]);
+
+  const tagCounts = useMemo(() => {
+    const m = {};
+    items.forEach(i => {
+      const tags = i.tags || [];
+      const isWW = tags.includes("wordswithalan");
+      tags.filter(t => t !== "wordswithalan").forEach(t => {
+        if ((t === "其他資料" || t === "朋友回憶") && isWW) return;
+        m[t] = (m[t] || 0) + 1;
+      });
+    });
+    return m;
+  }, [items]);
+
+  const handleSidebarSwitch = (view) => {
+    setSidebarView(view);
+    setSelectedTag(null);
+    setBookSubcat(null);
+    setSelectedWork(null);
+    setSelectedEra("all");
+    setSearchQ("");
+  };
+
+  const activeLabel = useMemo(() => {
+    if (searchQ.trim()) return "搜尋:" + searchQ;
+    if (sidebarView === "tag" && selectedTag) return selectedTag;
+    if (sidebarView === "work" && selectedWork) return selectedWork.label;
+    if (sidebarView === "work" && selectedEra !== "all") {
+      const p = WW_PERIODS.find(x => x.id === selectedEra);
+      return p ? p.label + " (" + p.years + ")" : null;
+    }
+    return null;
+  }, [searchQ, sidebarView, selectedTag, selectedWork, selectedEra]);
+
+  const sortedDisplayed = useMemo(() => {
+    if (searchQ.trim()) return displayed;
+    return [...displayed].sort((a, b) =>
+      sortOrder === "desc" ? (b.year || 0) - (a.year || 0) : (a.year || 0) - (b.year || 0)
+    );
+  }, [displayed, sortOrder, searchQ]);
+
+  const QUICK_LINKS = [
+    { label: "Alan Rickman — IMDb", url: "https://www.imdb.com/name/nm0000614/" },
+    { label: "BBC Alan Rickman", url: "https://www.bbc.com/search?q=Alan+Rickman" },
+    { label: "The Guardian", url: "https://www.theguardian.com/film/alan-rickman" },
+    { label: "New York Magazine", url: "https://nymag.com/tags/alan-rickman/" },
+    { label: "艾倫·瑞克曼粉絲站", url: "https://www.britbitsandclips.com/" }
+  ];
+
+  return (
+    <div style={{ display: "flex", height: "100vh", fontFamily: "'Noto Sans TC', 'PingFang TC', system-ui, sans-serif", background: C.pageBg, color: C.bodyText, overflow: "hidden" }}>
+
+      {/* ── Sidebar ── */}
+      {sidebarOpen && (
+        <div style={{ width: 268, flexShrink: 0, background: C.sidebarBg, borderRight: "1px solid " + C.border, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+
+          {/* Brand */}
+          <div style={{ padding: "22px 18px 14px", borderBottom: "1px solid " + C.border }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: C.mutedText, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 4 }}>DIGITAL ARCHIVE</div>
+            <div style={{ fontFamily: "'Noto Serif TC', Georgia, serif", fontSize: 22, fontWeight: 900, color: C.bodyText, lineHeight: 1.15 }}>艾倫·瑞克曼</div>
+            <div style={{ fontSize: 12, color: C.mutedText, marginTop: 3, fontStyle: "italic" }}>Alan Rickman · 1946–2016</div>
+          </div>
+
+          {/* Tabs */}
+          <div style={{ padding: "10px 14px", borderBottom: "1px solid " + C.border, display: "flex", gap: 6 }}>
+            {[{ id: "tag", label: "精選" }, { id: "work", label: "按作品" }].map(m => (
+              <button key={m.id} onClick={() => handleSidebarSwitch(m.id)} style={{
+                flex: 1, padding: "8px 6px", border: "none", borderRadius: 7,
+                background: sidebarView === m.id ? C.primary : C.blockBg,
+                color: sidebarView === m.id ? "#fff" : C.mutedText,
+                fontSize: 13, fontWeight: sidebarView === m.id ? 700 : 500,
+                cursor: "pointer", transition: "background 0.12s"
+              }}>{m.label}</button>
+            ))}
+          </div>
+
+          {/* Quick Links */}
+          {sidebarView === "tag" && (
+            <div style={{ padding: "8px 14px 6px", borderBottom: "1px solid " + C.border }}>
+              <div style={{ fontSize: 9.5, fontWeight: 700, color: C.mutedText, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 5 }}>快速連結</div>
+              {QUICK_LINKS.map(lk => (
+                <a key={lk.label} href={lk.url} target="_blank" rel="noopener noreferrer"
+                  style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 6px", borderRadius: 5, color: C.mutedText, textDecoration: "none", fontSize: 12, marginBottom: 1 }}>
+                  <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{lk.label}</span>
+                  <span style={{ fontSize: 10, color: C.border, flexShrink: 0 }}>↗</span>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {/* Content List */}
+          {sidebarView === "tag" ? (
+            <div style={{ flex: 1, overflowY: "auto", padding: "10px 14px" }}>
+              <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 9.5, fontWeight: 700, color: C.mutedText, letterSpacing: "0.1em", textTransform: "uppercase", flex: 1 }}>分類</span>
+                {selectedTag && (
+                  <button onClick={() => { setSelectedTag(null); setBookSubcat(null); }}
+                    style={{ fontSize: 10, padding: "2px 6px", border: "none", background: "none", color: C.mutedText, cursor: "pointer" }}>✕</button>
+                )}
+              </div>
+              {TAG_CATEGORIES.map(tag => {
+                const active = selectedTag === tag;
+                const cnt = tagCounts[tag] || 0;
+                const icon = TAG_ICONS[tag] || "•";
+                return (
+                  <button key={tag} onClick={() => { setSelectedTag(active ? null : tag); setBookSubcat(null); }} style={{
+                    display: "flex", alignItems: "center", gap: 8, width: "100%",
+                    padding: "8px 10px", border: "none", borderRadius: 7,
+                    background: active ? C.primary : "transparent",
+                    color: active ? "#fff" : C.bodyText,
+                    fontSize: 13, fontWeight: active ? 700 : 400,
+                    cursor: "pointer", textAlign: "left", marginBottom: 1, lineHeight: 1.4,
+                    transition: "background 0.12s"
+                  }}>
+                    <span style={{ fontSize: 14, flexShrink: 0, width: 20 }}>{icon}</span>
+                    <span style={{ flex: 1 }}>{tag}</span>
+                    <span style={{ fontSize: 11.5, color: active ? "rgba(255,255,255,0.7)" : C.mutedText, flexShrink: 0, minWidth: 20, textAlign: "right" }}>{cnt}</span>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+              <div style={{ padding: "10px 14px 8px", borderBottom: "1px solid " + C.border }}>
+                <div style={{ fontSize: 9.5, fontWeight: 700, color: C.mutedText, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>年代篩選</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                  {PERIOD_ERA_LABELS.map(era => {
+                    const active = selectedEra === era.id;
+                    return (
+                      <button key={era.id} onClick={() => { setSelectedEra(era.id); setSelectedWork(null); }}
+                        style={{
+                          padding: "5px 12px", border: "1px solid " + (active ? era.color : C.border), borderRadius: 20,
+                          background: active ? era.color : "transparent",
+                          color: active ? "#fff" : C.mutedText,
+                          fontSize: 12, fontWeight: active ? 700 : 500,
+                          cursor: "pointer", transition: "all 0.12s"
+                        }}>{era.label}</button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div style={{ flex: 1, overflowY: "auto", padding: "10px 14px" }}>
+                <div style={{ fontSize: 9.5, fontWeight: 700, color: C.mutedText, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>
+                  {selectedEra === "all" ? "全部作品" : (WW_PERIODS.find(p => p.id === selectedEra)?.label || "") + " 作品"}
+                </div>
+                {erasWorks.map(work => {
+                  const active = selectedWork?.tag === work.tag;
+                  const typeIcon = TYPE_ICON[work.type] || "▪";
+                  const eraPeriod = WW_PERIODS.find(p => p.works.some(w => w.tag === work.tag));
+                  const dotColor = eraPeriod ? (PERIOD_ERA_LABELS.find(e => e.id === eraPeriod.id)?.color || C.primary) : C.primary;
+                  return (
+                    <button key={work.tag} onClick={() => setSelectedWork(active ? null : work)}
+                      style={{
+                        display: "flex", alignItems: "flex-start", gap: 8, width: "100%",
+                        padding: "7px 10px", border: "none",
+                        borderLeft: active ? "3px solid " + dotColor : "3px solid transparent",
+                        borderRadius: "0 7px 7px 0",
+                        background: active ? C.blockBg : "none",
+                        color: active ? C.bodyText : C.mutedText,
+                        fontSize: 13, fontWeight: active ? 700 : 400,
+                        cursor: "pointer", textAlign: "left", marginBottom: 1, lineHeight: 1.45
+                      }}>
+                      <span style={{ fontSize: 12, marginTop: 1, flexShrink: 0 }}>{typeIcon}</span>
+                      <div style={{ flex: 1 }}>
+                        <div>{work.label}</div>
+                        {work.role && <div style={{ fontSize: 11, color: C.mutedText, marginTop: 1, fontStyle: "italic" }}>{work.role}</div>}
+                      </div>
+                      {work.year && <span style={{ fontSize: 10, color: C.mutedText, flexShrink: 0, fontFamily: "monospace", marginTop: 2 }}>{work.year}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Main Content ── */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
+
+        {/* Top bar */}
+        <div style={{ background: C.white, borderBottom: "1px solid " + C.border, padding: "11px 24px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          <button onClick={() => setSidebarOpen(o => !o)} style={{
+            background: "none", border: "1px solid " + C.border, borderRadius: 7,
+            padding: "8px 11px", fontSize: 15, cursor: "pointer", color: C.mutedText, flexShrink: 0
+          }}>☰</button>
+          <input value={searchQ} onChange={e => setSearchQ(e.target.value)}
+            placeholder="搜尋作品、標題、分類..."
+            style={{
+              flex: 1, padding: "9px 14px", border: "1.5px solid " + C.border, borderRadius: 8,
+              fontSize: 14, color: C.bodyText, outline: "none", background: C.pageBg,
+              fontFamily: "inherit"
+            }} />
+          {searchQ && (
+            <button onClick={() => setSearchQ("")} style={{
+              background: C.blockBg, border: "none", borderRadius: 7,
+              padding: "9px 12px", fontSize: 13, color: C.mutedText, cursor: "pointer"
+            }}>✕</button>
+          )}
+        </div>
+
+        {/* Content panel */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "0 28px 48px" }}>
+
+          {/* Section header */}
+          <div style={{ paddingTop: 24, paddingBottom: 14, borderBottom: "1px solid " + C.border, marginBottom: 20 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6, flexWrap: "wrap" }}>
+              {activeLabel ? (
+                <h1 style={{ margin: 0, fontFamily: "'Noto Serif TC', Georgia, serif", fontSize: 26, fontWeight: 900, color: C.bodyText, lineHeight: 1.2 }}>
+                  {sidebarView === "tag" && selectedTag && TAG_ICONS[selectedTag] && (
+                    <span style={{ marginRight: 8 }}>{TAG_ICONS[selectedTag]}</span>
+                  )}
+                  {activeLabel}
+                </h1>
+              ) : (
+                <h1 style={{ margin: 0, fontFamily: "'Noto Serif TC', Georgia, serif", fontSize: 26, fontWeight: 900, color: C.bodyText }}>全部資料</h1>
+              )}
+              {sidebarView === "work" && selectedWork?.role && (
+                <span style={{ fontSize: 14, color: C.mutedText, fontStyle: "italic" }}>{selectedWork.role}</span>
+              )}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 13, color: C.mutedText }}>
+                共 <strong style={{ color: C.bodyText }}>{displayed.length}</strong> 筆資料
+              </span>
+              <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6 }}>
+                <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} style={{
+                  fontSize: 12, border: "1px solid " + C.border, borderRadius: 6,
+                  padding: "5px 10px", background: C.white, color: C.bodyText,
+                  cursor: "pointer", outline: "none"
+                }}>
+                  <option value="desc">年份(新→舊)</option>
+                  <option value="asc">年份(舊→新)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* 避雷警語 */}
+          {sidebarView === "tag" && selectedTag === "書籍&雜誌" && (
+            <div style={{
+              background: "#FDEEEE", border: "1px solid #E8B5B5", borderLeft: "4px solid #B91C1C",
+              borderRadius: 8, padding: "16px 20px", marginBottom: 16, fontSize: 13, lineHeight: 1.7, color: "#7A1F1F"
+            }}>
+              <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 8, letterSpacing: "0.02em", color: "#9A1414" }}>⚠ 避雷警語</div>
+              <div style={{ marginBottom: 6 }}>
+                <strong>千萬不要看</strong>記者未經艾倫同意出版、被艾倫稱作垃圾的
+                <strong style={{ color: "#9A1414" }}> 《Alan Rickman: The Unauthorised Biography》</strong>。
+              </div>
+              <div style={{ marginBottom: 6 }}>
+                還有錯誤翻譯百出、製造的謠言比《Alan Rickman: The Unauthorised Biography》還多的
+                <strong style={{ color: "#9A1414" }}> 《瘋狂與深情：艾倫．瑞克曼日記絮語》</strong>（繁中／朱崇旻、林小綠 譯）。
+              </div>
+              <div style={{ marginTop: 10, fontSize: 12.5, fontStyle: "italic", color: "#5A1818" }}>
+                避開這兩本書，你就能避開網路上絕大多數的謠言。也盡量不要去看有引用這兩本書當資料來源的網路文章。
+              </div>
+            </div>
+          )}
+
+          {/* 書籍&雜誌 次分類列 */}
+          {sidebarView === "tag" && selectedTag === "書籍&雜誌" && (
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18, paddingBottom: 14, borderBottom: "1px solid " + C.border }}>
+              {[null, ...BOOK_SUBCAT_ORDER].map(sub => {
+                const active = bookSubcat === sub;
+                const cnt = sub === null
+                  ? items.filter(i => (i.tags || []).includes("書籍&雜誌")).length
+                  : items.filter(i => (i.tags || []).includes("書籍&雜誌") && BOOK_SUBCATS[i.id] === sub).length;
+                return (
+                  <button key={sub || "all"} onClick={() => setBookSubcat(sub)} style={{
+                    padding: "5px 14px", border: "1px solid " + (active ? C.primary : C.border), borderRadius: 18,
+                    background: active ? C.primary : C.white, color: active ? "#fff" : C.bodyText,
+                    fontSize: 12.5, fontWeight: active ? 700 : 500, cursor: "pointer", transition: "all 0.12s"
+                  }}>
+                    {sub || "全部"} <span style={{ fontSize: 11, opacity: 0.6, marginLeft: 3 }}>({cnt})</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Awards panel */}
+          {sidebarView === "work" && selectedWork?.awards && (
+            <AwardsPanel awards={selectedWork.awards} />
+          )}
+
+          {/* Cards Container */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {sortedDisplayed.slice(0, displayCount).map(item => (
+              <ArchiveCard key={item.id} item={item} />
+            ))}
+            {sortedDisplayed.length === 0 && (
+              <div style={{ textAlign: "center", padding: "80px 20px", color: C.mutedText, fontSize: 15 }}>
+                查無符合條件的資料
+              </div>
+            )}
+          </div>
+
+          <div ref={sentinelRef} style={{ height: 1 }} />
+          {displayCount < sortedDisplayed.length && (
+            <div style={{ textAlign: "center", padding: "20px", fontSize: 13, color: C.mutedText }}>載入中…</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+window.__APP_RENDERED__ = true;
+
+if (window.__loaderSteps) {
+  window.__loaderSteps.markRender();
+  setTimeout(function() { window.__loaderSteps.markDone(); }, 80);
+}
+setTimeout(function() {
+  var loader = document.getElementById("loader");
+  if (loader) {
+    loader.classList.add("hide");
+    setTimeout(function() { loader.remove(); }, 400);
+  }
+}, 350);
+  </script>
+</body>
+</html>
