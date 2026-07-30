@@ -157,8 +157,7 @@ const HTML_DATA = [
   { id: 10140, type: "link", title: "The Half", subtitle: "Simon Annand 攝影集", year: 2008, url: "https://www.amazon.com/Half-Simon-Annand/dp/0571237738", tags: ["書籍&雜誌"], notes: [] },
   { id: 10141, type: "link", title: "Harry Potter Page to Screen Collector's Edition", subtitle: "哈利波特", year: 2011, url: "https://www.amazon.com/-/zh_TW/Harry-Potter-Page-Screen-Filmmaking/dp/1612185916", tags: ["書籍&雜誌"], notes: [] },
   { id: 10142, type: "link", title: "Harry Potter Film Wizardry Revised and Expanded", subtitle: "Brian Sibley 著", year: 2012, url: "https://www.amazon.com/Harry-Potter-Wizardry-Revised-Expanded/dp/0062215507", tags: ["書籍&雜誌"], notes: [] },
-  { id: 10143, type: "link", title: "《十年一覺電影夢：李安傳》", subtitle: "《理性與感性》", year: 2016, url: "https://isbn.ncl.edu.tw/NEW_ISBNNet/main_DisplayRecord_Popup.php?Pact=view&Pkey=1141030*0231
-", tags: ["書籍&雜誌"], notes: [] },
+  { id: 10143, type: "link", title: "《十年一覺電影夢：李安傳》", subtitle: "《理性與感性》", year: 2016, url: "https://isbn.ncl.edu.tw/NEW_ISBNNet/main_DisplayRecord_Popup.php?Pact=view&Pkey=1141030*0231", tags: ["書籍&雜誌"], notes: [] },
   { id: 10144, type: "link", title: "《SCREEN》雜誌 艾倫·瑞克曼特刊復刻號 | SCREEN STORE 日本", subtitle: "", year: 2016, url: "https://screenstore.jp/shopdetail/000000003799/", tags: ["書籍&雜誌"], notes: [] },
   { id: 10145, type: "link", title: "Books | Bush Theatre | Shepherd's Bush, London", subtitle: "Bush Theatre 出版品（艾倫早期演出地點）", year: 2016, url: "https://www.bushtheatre.co.uk/shop/books/", tags: ["書籍&雜誌"], notes: [] },
   { id: 10146, type: "link", title: "蜷川幸雄：千刃千眼 | PAR 表演藝術雜誌", subtitle: "Tango at the End of Winter", year: 2016, url: "https://par.npac-ntch.org/tw/publish/bookDetail/1450167991387655", tags: ["書籍&雜誌"], notes: [] },
