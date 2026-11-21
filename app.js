@@ -621,7 +621,7 @@ const QUICK_LINKS = [
   { label: "BBC Alan Rickman", url: "https://www.bbc.com/search?q=Alan+Rickman" },
   { label: "The Guardian", url: "https://www.theguardian.com/film/alan-rickman" },
   { label: "New York Magazine", url: "https://nymag.com/tags/alan-rickman/" },
-  { label: "艾倫·瑞克曼粉絲站", url: "https://www.britbitsandclips.com/" }
+  { label: "Instagram 粉絲帳", url: "https://www.instagram.com/alan__rickman__/" }
 ];
 
 const SPECIAL_NOTES = [
