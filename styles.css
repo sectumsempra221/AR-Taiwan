@@ -30,9 +30,6 @@
   --radius-md: 7px;
   --radius-lg: 8px;
   --radius-pill: 20px;
-
-  /* Z-index */
-  --z-loader: 9999;
 }
 /* ==========================================================================
    Base & reset
@@ -70,98 +67,6 @@ button {
   cursor: pointer;
 }
 
-/* Loading overlay */
-.loader {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-page-bg);
-  color: var(--color-muted-text);
-  font-family: var(--font-serif);
-  z-index: var(--z-loader);
-  transition: opacity 0.4s ease;
-}
-
-.loader.is-hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.loader-inner {
-  text-align: center;
-  max-width: 360px;
-  padding: 0 20px;
-}
-
-.loader-title {
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--color-body-text);
-  margin-bottom: 16px;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-
-.loader-sub {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-  margin-bottom: 28px;
-  white-space: nowrap;
-}
-
-.loader-sub-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 28px;
-}
-
-.loader-dash {
-  display: block;
-  width: 18px;
-  height: 1px;
-  background: var(--color-accent);
-}
-
-.progress-wrap {
-  width: 100%;
-  height: 3px;
-  background: var(--color-border);
-  border-radius: 2px;
-  overflow: hidden;
-  position: relative;
-  margin-bottom: 14px;
-}
-
-.progress-bar {
-  position: absolute;
-  left: -40%;
-  top: 0;
-  height: 100%;
-  width: 40%;
-  background: linear-gradient(90deg, var(--color-accent), #B89968);
-  animation: indeterminate 1.4s ease-in-out infinite;
-}
-
-@keyframes indeterminate {
-  0%   { left: -40%; width: 40%; }
-  60%  { left: 100%; width: 40%; }
-  100% { left: 100%; width: 40%; }
-}
-
-.step-text {
-  font-size: 8px;
-  color: var(--color-muted-text);
-  min-height: 18px;
-  letter-spacing: 0.14em;
-  opacity: 0.7;
-}
 /* ==========================================================================
    Layout shell
    ========================================================================== */
@@ -1141,4 +1046,3 @@ button {
   color: #A39E91;
   letter-spacing: 0;
 }
-
