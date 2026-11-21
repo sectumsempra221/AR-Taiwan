@@ -28,40 +28,47 @@ const AWARDS_BY_WORK = {
   "A Promise": ["✓ Beijing International Film Festival — Tiantan Award for Best Supporting Actor (Won, 2014)"]
 };
 
+
 const FEATURETTES_BY_WORK = {
   "Die Hard": [
     "2000 — Twentieth Century Fox: The Blockbuster Years ",
     "2000 — Hollywood Salutes Bruce Willis: An American Cinematheque Tribute",
+    "2013 — Decoding Die Hard (Die Hard Collection bonus-disc documentary)",
     "2019 — The Movies That Made Us: Die Hard (Netflix・S1E4)",
-    "2021 — Guns, Muscles, and Kung Fu — The 1980s and the Birth of the 'Action Movie' (archive footage)"
+    "2021 — Guns, Muscles, and Kung Fu — The 1980s and the Birth of the 'Action Movie' (archive footage)",
+    "2026 — Cunk on Cinema (BBC Two / Netflix・archive footage)"
   ],
   "Quigley Down Under": [
     "2002 — The Rebirth of the Western (MGM DVD featurette)"
   ],
   "Robin Hood": [
-    "1991 — Robin Hood: The Myth, the Man, the Movie (TV)"
+    "1991 — Robin Hood: The Myth, the Man, the Movie (TV)",
+    "1991 — One-on-One with the Cast of 'Robin Hood: Prince of Thieves'",
+    "2022 — Here We Are Kings: The Making of 'Robin Hood: Prince of Thieves' (archive footage)"
   ],
   "Bob Roberts": [
     "1992 — HBO First Look"
   ],
   "Galaxy Quest": [
-    "2000 — Galaxy Quest: On Location in Space (DVD・IMDb tt5276662)",
+    "2000 — Galaxy Quest: On Location in Space (DVD)",
     "2009 — Galaxy Quest: Actors in Space (DVD short)",
     "2009 — Alien School – Creating the Thermian Race (DVD short)",
     "2009 — Historical Documents – The Story of Galaxy Quest (DVD short)",
+    "2009 — Galaxy Quest: Never Give Up. Never Surrender: The Intrepid Crew of the NSEA Protector (DVD short)",
     "2019 — Never Surrender: A Galaxy Quest Documentary"
   ],
   "Dogma": [
-    "2001 — Judge Not: In Defense of Dogma (DVD)"
+    "2001 — Judge Not: In Defense of Dogma (documentary by J.M. Kenny)"
   ],
   "Victoria Wood": [
-    "2000 — Victoria Wood with All the Trimmings: Outtakes (Video short・uncredited)",
-    "2005 — Victoria Wood: A BAFTA Tribute (TV Special・uncredited)",
+    "2000 — Victoria Wood with All the Trimmings: Outtakes (video short)",
+    "2005 — Victoria Wood: A BAFTA Tribute (TV special)",
     "2017 — Our Friend Victoria (BBC 悼念特輯・archive footage)"
   ],
   "Harry Potter": [
     "2003 — Interviews with Professors & More (DVD)",
     "2004 — Creating the Vision (DVD short・uncredited)",
+    "2005 — Planet Voice: Planet Potter",
     "2006 — Harry vs. the Horntail: The First Task (DVD)",
     "2009 — Creating the World of Harry Potter (Blu-ray・Part 1–2〔2009〕/ Part 8〔2012〕)",
     "2011 — When Harry Left Hogwarts (ITV / DH2 Blu-ray)",
@@ -75,10 +82,36 @@ const FEATURETTES_BY_WORK = {
     "2007 — Snow Cake: Behind the Scenes / Autism Awareness (DVD)"
   ],
   "Sweeney Todd": [
-    "2008 — Sweeney Todd: Burton + Carter + Depp = Todd (DVD)"
+    "2008 — Sweeney Todd: Burton + Carter + Depp = Todd (DVD)",
+    "2008 — HBO First Look: Sweeney Todd"
   ],
   "A Little Chaos": [
     "2015 — The Making of a Little Chaos (DVD)"
+  ],
+  "Play": [
+    "2003 — Check the Gate: Putting Beckett on Film (DVD)"
+  ],
+  "Perfume": [
+    "2007 — The Story of 'Perfume' (DVD)"
+  ],
+  "Mesmer": [
+    "1994 — The Making of Mesmer (BBC)"
+  ],
+  "Sense and Sensibility": [
+    "1995 — Behind-the-scenes footage from Sense and Sensibility"
+  ],
+  "The Winter Guest": [
+    "1997 — Behind the Scenes of The Winter Guest"
+  ],
+  "Truly Madly Deeply": [
+    "1991 — Truly Madly Deeply documentary (Anthony Minghella)"
+  ],
+  "Tango at the End of Winter": [
+    "1991 — Tango at the End of Winter: documentary, part 1 (behind the scenes on Yukio Ninagawa's production)",
+    "1991 — Tango at the End of Winter: documentary, part 2 (behind the scenes on Yukio Ninagawa's production)"
+  ],
+  "Kings Head Maverick": [
+    "2021 — Maverick (King's Head Theatre documentary)"
   ]
 };
 
@@ -94,7 +127,6 @@ const WW_PERIODS = [
 
       // ---- 1975 ----
       { tag: "Romeo and Juliet 1975", label: "Romeo and Juliet", year: 1975, role: "Paris (Haymarket Theatre, Leicester・Michael Bogdanov 執導・舞台)", type: "stage" },
-      { tag: "Manchester Enthusiasts", label: "The Manchester Enthusiasts", year: 1975, role: "演出 (BBC Radio・現存最早的廣播 credit)", type: "voice" },
       { tag: "Saint Joan", label: "Saint Joan", year: 1975, role: "Inquisitor 等 (Library Theatre, Manchester・舞台)", type: "stage" },
       { tag: "Girl in My Soup", label: "There's a Girl in My Soup", year: 1975, role: "Andrew Hunter (Library Theatre, Manchester・舞台)", type: "stage" },
       { tag: "Joseph", label: "Joseph and the Amazing Technicolor Dreamcoat", year: 1975, role: "Asher (Haymarket Theatre, Leicester・舞台)", type: "stage" },
@@ -161,6 +193,7 @@ const WW_PERIODS = [
       { tag: "Caught on the Crossing", label: "Caught on the Crossing (by Manny Draycott)", year: 1983, role: "Anthony (BBC Radio 3 — 13 Oct 1983; rpt 10 Jun 1984; dir. Cherry Cookson)", type: "voice" },
 
       // ---- 1984 ----
+      { tag: "Manchester Enthusiasts", label: "The Manchester Enthusiasts", year: 1984, role: "John Vandeleur (BBC Radio 4 The Monday Play・Robert Cooper 導演)", type: "voice" },
       { tag: "Lucky Chance", label: "The Lucky Chance(Aphra Behn 作)", year: 1984, role: "Gayman (Royal Court Theatre・舞台)", type: "stage" },
       { tag: "Lorenzaccio Story", label: "The Lorenzaccio Story (by Paul Thompson after Alfred de Musset)", year: 1984, role: "Piero Strozzi (BBC Radio 3 — 16 Sep 1984; dir. Margaret Windham)", type: "voice" },
 
@@ -181,7 +214,6 @@ const WW_PERIODS = [
       { tag: "Trick to Catch", label: "A Trick to Catch the Old One(Middleton 作・Peter Barnes 改編)", year: 1985, role: "Theodorus Witgood (BBC Radio 3・1985 年 9 月 25 日首播・Ian Cotterell 導演)", type: "voice" },
 
       // ---- 1986 ----
-      { tag: "Blood Wedding Radio", label: "Blood Wedding(Lorca 作・廣播版)", year: 1986, role: "Leonardo (BBC Radio)", type: "voice" },
       { tag: "Blind Corner", label: "Blind Corner(Dornford Yates 原著)", year: 1986, role: "旁白・有聲書", type: "voice" },
       { tag: "Mephisto", label: "Mephisto", year: 1986, role: "Hendrik Höfgen (RSC, Barbican Theatre・舞台)", type: "stage" },
       { tag: "That Man Bracken", label: "That Man, Bracken(Thomas Kilroy 作)", year: 1986, role: "Brendan Bracken (BBC Radio 3・1986 年 6 月 20 日・Robert Cooper 導演)", type: "voice" },
@@ -194,11 +226,11 @@ const WW_PERIODS = [
 
       // ---- 1988 ----
       { tag: "True Stories", label: "《True Stories》", year: 1988, role: "旁白 (紀錄片單集)", type: "voice" },
-      { tag: "Late Show", label: "The Late Show: 'Seven Daily Sins'", year: 1988, role: "演出 (BBC)", type: "tv" },
       { tag: "Peace of Brest", label: "The Peace of Brest(Mikhail Shatrov 作)", year: 1988, role: "現場同步口譯 (Lyric Hammersmith・全俄語卡司演出)", type: "performance" },
       { tag: "Die Hard", label: "《終極警探》", year: 1988, role: "Hans Gruber (公認的電影出道作)", type: "film", awards: AWARDS_BY_WORK["Die Hard"] },
 
       // ---- 1989 ----
+      { tag: "7 Deadly Sins Stage Acting", label: "7 Deadly Sins: Stage Acting (The Late Show, BBC2)", year: 1989, role: "旁白 / 共同編劇 (與 Jim Broadbent、Alison Steadman 合演的諷刺短片)", type: "tv" },
       { tag: "The January Man", label: "《耀武揚威》", year: 1989, role: "Ed", type: "film" },
       { tag: "Revolutionary Witness", label: "《Revolutionary Witness》", year: 1989, role: "Jacques Roux ('The Preacher' 單集・BBC TV 短片)", type: "tv" },
       { tag: "Spirit of Man", label: "ScreenPlay: The Spirit of Man", year: 1989, role: "Israel Yates ('From Sleep and Shadow' 單集・BBC TV)", type: "tv" },
@@ -216,6 +248,7 @@ const WW_PERIODS = [
       { tag: "Robin Hood", label: "《俠盜王子羅賓漢》", year: 1991, role: "Sheriff of Nottingham", type: "film", awards: AWARDS_BY_WORK["Robin Hood"] },
       { tag: "Tango at the End of Winter", label: "《冬末探戈》", year: 1991, role: "Sei (蜷川幸雄執導・愛丁堡藝術節 → Piccadilly Theatre, West End・舞台)", type: "stage" },
       { tag: "Close My Eyes", label: "《閉上我的眼睛》", year: 1991, role: "Sinclair Bryant", type: "film", awards: AWARDS_BY_WORK["Close My Eyes"] },
+      { tag: "Blood Wedding", label: "Blood Wedding(Lorca 作)", year: 1992, role: "Leonardo (BBC World Service・Play of the Week・1992 年 2 月 17 日・Walter Acosta 導演)", type: "voice" },
       { tag: "Tubular Bells II", label: "Tubular Bells II", year: 1992, role: "〈The Bell〉的司儀,掛名 'A Strolling Player'(Mike Oldfield 音樂專輯)", type: "voice" },
       { tag: "Bob Roberts", label: "《天生贏家》", year: 1992, role: "Lukas Hart III", type: "film" },
       { tag: "Hamlet", label: "Hamlet", year: 1992, role: "Hamlet (Riverside Studios・Robert Sturua 執導・舞台)", type: "stage" },
@@ -255,8 +288,9 @@ const WW_PERIODS = [
       { tag: "The Search for John Gissing", label: "《尋找約翰·吉辛》", year: 2001, role: "John Gissing", type: "film" },
       { tag: "Willows", label: "《Willows》(又名 Inspiration)", year: 2001, role: "執行監製", type: "tv" },
       { tag: "Private Lives", label: "Private Lives", year: 2001, role: "Elyot Chase (Albery Theatre, West End 2001 → Richard Rodgers Theatre, Broadway 2002)", type: "stage", awards: AWARDS_BY_WORK["Private Lives"] },
-      { tag: "Harry Potter", label: "《哈利波特》系列", year: 2001, role: "Severus Snape (2001–2011・共八部電影)", type: "film", awards: AWARDS_BY_WORK["Harry Potter"] },
+      { tag: "Harry Potter", label: "《哈利波特》系列", year: 2001, role: "Severus Snape (2001–2011・共八部電影)", type: "film", countAs: 8, awards: AWARDS_BY_WORK["Harry Potter"] },
       { tag: "War Poems", label: "War Poems(Goran Simic 詩作)", year: 2001, role: "朗讀 (四首)", type: "voice" },
+      { tag: "The Billy Elliot Boy", label: "《The Billy Elliot Boy》(BBC Omnibus)", year: 2001, role: "本人 (紀錄片・談 Jamie Bell)", type: "self" },
       { tag: "When Love Speaks", label: "When Love Speaks", year: 2002, role: "Sonnet 130 朗讀 (CD・並參與 Old Vic 現場音樂會)", type: "voice" },
       { tag: "King of the Hill", label: "King of the Hill", year: 2002, role: "King Philip (配音・Fox・'Joust Like a Woman' 單集)", type: "voice" },
       { tag: "Collateral Damage", label: "Collateral Damage II", year: 2003, role: "朗讀 Robert Byrd 反戰演說 (National Theatre)", type: "voice" },
@@ -278,7 +312,8 @@ const WW_PERIODS = [
       { tag: "Sweeney Todd", label: "《瘋狂理髮師》", year: 2007, role: "Judge Turpin", type: "film", awards: AWARDS_BY_WORK["Sweeney Todd"] },
       { tag: "Bottle Shock", label: "《戀戀酒鄉》", year: 2008, role: "Steven Spurrier", type: "film", awards: AWARDS_BY_WORK["Bottle Shock"] },
       { tag: "Creditors", label: "Creditors(Strindberg 作)", year: 2008, role: "導演 (Donmar Warehouse・2010 移師 BAM 重演)", type: "stage" },
-      { tag: "Harold Pinter Celebration", label: "Harold Pinter: A Celebration", year: 2009, role: "演出 (National Theatre – Olivier・舞台)", type: "stage" }
+     { tag: "Sonnet Number 12", label: "Sonnet Number 12", year: 2009, role: "配音 (莎士比亞第 12 首十四行詩的 2 分鐘動畫短片・Helen Piercy 導演)", type: "voice" },
+     { tag: "Harold Pinter Celebration", label: "Harold Pinter: A Celebration", year: 2009, role: "演出 (National Theatre – Olivier・舞台)", type: "stage" }
     ]
   },
   {
@@ -304,6 +339,7 @@ const WW_PERIODS = [
       { tag: "A Promise", label: "《愛的承諾》", year: 2013, role: "Karl Hoffmeister", type: "film", awards: AWARDS_BY_WORK["A Promise"] },
       { tag: "CBGB", label: "《龐克地下城》", year: 2013, role: "Hilly Kristal", type: "film" },
       { tag: "Dust", label: "《Dust》", year: 2013, role: "Todd (短片)", type: "tv" },
+      { tag: "Richard Attenborough", label: "《Richard Attenborough: A Life in Film》", year: 2014, role: "旁白 (紀錄片)", type: "voice" },
       { tag: "A Little Chaos", label: "《美人情園 A Little Chaos》", year: 2014, role: "路易十四 / 導演 / 共同編劇", type: "film" },
       { tag: "Texas Start A Family", label: "Texas - Start A Family", year: 2015, role: "歌曲第二段念白,並為 MV 男主角 (與 Sharleen Spiteri 再度合作)", type: "self" },
       { tag: "Eye in the Sky", label: "《天眼行動》", year: 2015, role: "Lt. Gen. Frank Benson (最後真人演出・遺作)", type: "film", awards: AWARDS_BY_WORK["Eye in the Sky"] },
@@ -315,11 +351,15 @@ const WW_PERIODS = [
 ];
 
 const WORK_KEYWORDS = {
-"Die Hard": ["die hard", "終極警探", "gruber"],
+ "Truly Madly Deeply": ["truly madly deeply", "truly, madly, deeply", "人鬼未了情"],
+  "The Winter Guest Play": ["冬天的訪客》舞台劇", "首次執導戲劇", "首次擔任戲劇導演", "west yorkshire playhouse", "almeida", "first production as a theatre director", "first time directing for the stage"],
+  "Galaxy Quest": ["galaxy quest", "驚爆銀河系", "justin long", "賈斯汀·隆", "tim allen", "提姆·艾倫", "提姆・艾倫"],
+  "Mephisto": ["mephisto", "hofgen", "höfgen", "梅菲斯特", "霍夫根", "barbican"],
+  "Harry Potter": ["harry potter", "snape", "石內卜", "哈利波特", "hogwarts", "severus", "potter", "philosopher's stone", "chamber of secrets", "prisoner of azkaban", "goblet of fire", "order of the phoenix", "half-blood prince", "deathly hallows", "神秘的魔法石", "消失的密室", "阿茲卡班的逃犯", "火盃的考驗", "鳳凰會的密令", "混血王子的背叛", "死神的聖物"],
+  "Die Hard": ["die hard", "終極警探", "gruber"],
   "Les Liaisons Dangereuses": ["liaisons", "valmont", "危險關係", "merteuil"],
   "Sherlock Holmes": ["sherlock", "holmes", "福爾摩斯", "偵探"],
   "Robin Hood": ["robin hood", "sheriff", "nottingham", "俠盜王子", "羅賓漢"],
-  "Truly Madly Deeply": ["truly madly", "人鬼未了情"],
   "Sense and Sensibility": ["sense and sensibility", "sense & sensibility", "brandon", "理性與感性", "dashwood"],
   "The Barchester Chronicles": ["barchester", "slope", "巴切斯特"],
   "Tango at the End of Winter": ["tango at the end", "冬末探戈", "ninagawa", "蜷川"],
@@ -335,14 +375,11 @@ const WORK_KEYWORDS = {
   "Mesmer": ["mesmer", "瘋狂遊戲"],
   "Lumière and Company": ["lumière and company", "lumiere and company", "boorman", "電影誕生", "百年"],
   "Arena 2010": ["arena 2010", "arena bbc"],
-  "The Winter Guest Play": ["冬天的訪客》舞台劇", "west yorkshire playhouse"],
   "The Winter Guest": ["winter guest", "冬天的訪客", "sharman macdonald"],
   "Rasputin": ["rasputin", "俄宮奸雄"],
   "Michael Collins": ["michael collins", "de valera", "豪情本色", "valera"],
-  "Galaxy Quest": ["galaxy quest", "驚爆銀河系"],
   "Gambit": ["gambit", "冤家偷很大"],
   "Dogma": ["dogma", "怒犯天條", "metatron"],
-  "Harry Potter": ["harry potter", "snape", "石內卜", "哈利波特", "hogwarts", "severus", "potter"],
   "Love Actually": ["love actually", "愛是您", "愛是我"],
   "Something the Lord Made": ["something the lord", "blalock", "天賜良醫"],
   "My Name Is Rachel Corrie": ["rachel corrie", "瑞秋·科里", "corrie"],
@@ -355,7 +392,7 @@ const WORK_KEYWORDS = {
   "John Gabriel Borkman": ["borkman", "john gabriel", "博克曼"],
   "Seminar": ["seminar", "研討會", "rebeck", "leonard"],
   "A Little Chaos": ["little chaos", "美人情園", "versailles", "louis xiv"],
-  "Wetherby": ["wetherby"],
+  "Wetherby": ["wetherby", "陌生男子"],
   "Dont Miss Wax": ["don't miss wax", "dont miss wax"],
   "For Love of Liberty": ["for love of liberty", "black patriots"],
   "Little Voice Big Mountain": ["little voice, big mountain", "little voice big mountain"],
@@ -367,8 +404,7 @@ const WORK_KEYWORDS = {
   "Alan documentary": ["alan documentary", "giga agladze", "tbilisi", "robert sturua", "第比利斯", "喬治亞"],
   "Private Lives": ["private lives", "私生活", "elyot", "coward", "lindsay duncan"],
   "Quigley Down Under": ["quigley", "捍衛遊俠", "marston"],
-  "Mephisto": ["mephisto", "hofgen", "barbican"],
-  "As You Like It": ["as you like it", "jaques", "stratford"],
+   "As You Like It": ["as you like it", "jaques", "stratford"],
   "Bob Roberts": ["bob roberts", "tim robbins", "天生贏家"],
   "An Awfully Big Adventure": ["awfully big adventure", "新愛情樂園", "o'hara", "bainbridge"],
   "Closet Land": ["closet land", "叛國作家", "interrogator"],
@@ -389,7 +425,10 @@ const WORK_KEYWORDS = {
   "A Mans a Man": ["a man's a man", "uriah shelly"],
   "Therese Raquin": ["thérèse raquin", "therese raquin"],
   "Barnes People": ["barnes' people", "barnes people"],
-  "Blood Wedding Radio": ["blood wedding"],
+  "Blood Wedding": ["blood wedding"],
+  "7 Deadly Sins Stage Acting": ["seven daily sins", "7 deadly sins", "stage acting", "jim broadbent", "alison steadman"],
+  "Sonnet Number 12": ["sonnet number 12", "sonnet 12"],
+  "Richard Attenborough": ["richard attenborough", "attenborough"],
   "Harold Pinter Celebration": ["harold pinter"],
   "All Day Breakfast": ["all day breakfast"],
   "Hamlet Bristol": ["laertes"],
@@ -399,10 +438,20 @@ const WORK_KEYWORDS = {
   "Fears and Miseries": ["fears and miseries"],
   "That Man Bracken": ["that man, bracken", "brendan bracken"],
   "The Search for John Gissing": ["the search for john gissing", "john gissing"],
-  "Hitchhiker's Guide": ["hitchhiker's guide", "hitchhiker", "marvin"],
-  "Winter's Tale": ["father garnet", "rosalind winter"],
+  "Hitchhiker's Guide": ["hitchhiker's guide", "hitchhiker", "marvin", "星際大奇航"],  "Winter's Tale": ["father garnet", "rosalind winter"],
   "Free Tibet testimony": ["free tibet", "phuntsog"],
-  "Joseph": ["joseph and the amazing technicolor dreamcoat"]
+  "Judas Kiss": ["judas kiss", "猶大之吻"],
+  "Dark Harbor": ["dark harbor", "惡夜謀殺"],
+  "Blow Dry": ["blow dry", "大放異彩"],
+  "Alice in Wonderland": ["alice in wonderland", "absolem", "智蟲"],
+  "The Song of Lunch": ["the song of lunch", "song of lunch", "午餐之歌"],
+  "The Wildest Dream": ["the wildest dream", "最狂野的夢"],
+  "Smiley's People": ["smiley's people", "史邁利的人馬"],
+  "The January Man": ["the january man", "耀武揚威"],
+  "Fallen Angels": ["fallen angels", "墮落天使"],
+  "The Boy in the Bubble": ["the boy in the bubble", "泡泡男孩"],
+  "Unforgivable Blackness": ["unforgivable blackness", "jack johnson"],
+ "Joseph": ["joseph and the amazing technicolor dreamcoat"]
 };
 
 const SEARCH_ALIASES = [
@@ -622,7 +671,20 @@ const SPECIAL_NOTES = [
 ];
 
 const BATCH_SIZE = 40;
-const YT_HOSTS = ["www.youtube.com", "youtu.be", "youtube.com"];
+
+const YT_HOSTS = ["www.youtube.com", "m.youtube.com", "youtu.be", "youtube.com"];
+
+function getYouTubeId(url) {
+  try {
+    const p = new URL(url);
+    const parts = p.pathname.split("/").filter(Boolean);
+    if (p.hostname === "youtu.be") return parts[0] || null;
+    if (["shorts", "embed", "live", "v"].includes(parts[0])) return parts[1] || null;
+    return p.searchParams.get("v") || null;
+  } catch {
+    return null;
+  }
+}
 
 function sanitizeUrl(url) {
   if (!url) return "";
@@ -632,8 +694,7 @@ function sanitizeUrl(url) {
     const p = new URL(u);
     if (!["https:", "http:"].includes(p.protocol)) return "";
     if (YT_HOSTS.includes(p.hostname)) {
-      let vid = p.searchParams.get("v");
-      if (!vid && p.hostname === "youtu.be") vid = p.pathname.slice(1);
+      const vid = getYouTubeId(u);
       if (vid) return "https://www.youtube.com/watch?v=" + vid;
     }
     return p.origin + p.pathname + (p.search || "");
@@ -642,14 +703,11 @@ function sanitizeUrl(url) {
   }
 }
 
-function getYouTubeId(url) {
-  try {
-    const p = new URL(url);
-    if (p.hostname === "youtu.be") return p.pathname.slice(1);
-    return p.searchParams.get("v") || null;
-  } catch {
-    return null;
-  }
+
+function normQuotes(s) {
+  return String(s || "")
+    .replace(/[\u2018\u2019\u201B\u2032]/g, "'")
+    .replace(/[\u201C\u201D\u201E]/g, '"');
 }
 
 function buildTrigrams(str) {
@@ -690,9 +748,9 @@ function fuzzyField(q, text, exactW, fuzzyW) {
 
 function matchWorkKeywords(work, item) {
   if ((item.excludeFromWork || []).includes(work.tag)) return false;   
-  const hay = [item.title, item.subtitle || "", ...(item.tags || [])]
-    .join(" ")
+   const hay = normQuotes([item.title, item.subtitle || "", ...(item.tags || [])].join(" "))
     .toLowerCase();
+
   const keys = WORK_KEYWORDS[work.tag] || [work.tag.toLowerCase()];
   return keys.some((k) => {
     const kLower = k.toLowerCase();
@@ -704,7 +762,7 @@ function matchWorkKeywords(work, item) {
 }
 
 function findMatchedWorks(query) {
-  const q = query.trim().toLowerCase();
+  const q = normQuotes(query).trim().toLowerCase();
   if (q.length < 2) return [];
   return WW_PERIODS
     .flatMap((p) => p.works)
@@ -715,12 +773,13 @@ function findMatchedWorks(query) {
           const kLower = k.toLowerCase();
           return kLower.includes(q) || q.includes(kLower);
         }) ||
-        work.label.toLowerCase().includes(q) ||
+        normQuotes(work.label).toLowerCase().includes(q) ||
         work.tag.toLowerCase().includes(q) ||
-        (work.role || "").toLowerCase().includes(q)
+        normQuotes(work.role).toLowerCase().includes(q)
       );
     });
 }
+
 
 function expandSearchTerms(query) {
   const expanded = new Set([query]);
@@ -742,7 +801,7 @@ function expandSearchTerms(query) {
 }
 
 function searchItems(query, items) {
-  const q = query.trim().toLowerCase();
+   const q = normQuotes(query).trim().toLowerCase();
   if (!q) return items;
 
   const YT_KEYWORDS = ["youtube", "yt", "影片", "video"];
@@ -755,11 +814,11 @@ function searchItems(query, items) {
 
   return items
     .map((item) => {
-      const title = item.title.toLowerCase();
-      const subtitle = (item.subtitle || "").toLowerCase();
-      const tags = (item.tags || []).join(" ").toLowerCase();
+      const title = normQuotes(item.title).toLowerCase();
+      const subtitle = normQuotes(item.subtitle).toLowerCase();
+      const tags = normQuotes((item.tags || []).join(" ")).toLowerCase();
       const url = (item.url || "").toLowerCase();
-      const notes = (item.notes || []).join(" ").toLowerCase();
+      const notes = normQuotes((item.notes || []).join(" ")).toLowerCase();
 
       const matchedWork = allWorksFlat.find((w) => matchWorkKeywords(w, item));
       const awards = matchedWork
@@ -797,11 +856,18 @@ function searchItems(query, items) {
     .map(({ item }) => item);
 }
 
+function getMonthDay(item) {
+  const m = /wordswithalan\.wordpress\.com\/\d{4}\/(\d{2})\/(\d{2})\//.exec(item.url || "");
+  return m ? Number(m[1] + m[2]) : 0;
+}
+
 function sortByYear(items, order) {
+  const dir = order === "desc" ? -1 : 1;
   return [...items].sort((a, b) =>
-    order === "desc" ? (b.year || 0) - (a.year || 0) : (a.year || 0) - (b.year || 0)
+    dir * (((a.year || 0) - (b.year || 0)) || (getMonthDay(a) - getMonthDay(b)))
   );
 }
+
 
 /* ---------------------------------------------------------------------
  * Render helpers
@@ -1201,7 +1267,6 @@ function computeActiveLabel() {
 
 (function () {
   const el = {
-    loader: document.getElementById("loader"),
     sidebar: document.getElementById("sidebar"),
     sidebarToggle: document.getElementById("sidebar-toggle"),
     tabBtns: document.querySelectorAll(".tab-btn"),
@@ -1261,10 +1326,6 @@ function computeActiveLabel() {
   state.items = ALL_DATA;
   applySidebarVisibility();
   setupSidebarPhoto();
-
-  window.setTimeout(() => {
-    el.loader.classList.add("is-hidden");
-  }, 300);
 
   subscribe(render);
   render();
@@ -1533,7 +1594,8 @@ const works = state.selectedType === "all"
         ? TYPE_FILTER_OTHER.includes(w.type)
         : w.type === state.selectedType
     );
-el.workListCount.textContent = works.length; 
+el.workListCount.textContent = works.reduce((n, w) => n + (w.countAs || 1), 0);
+
 
 works.forEach((work) => {
       const isActive = state.selectedWork && state.selectedWork.tag === work.tag;
